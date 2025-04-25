@@ -1,7 +1,7 @@
 // src/app/page.tsx
 'use client'; // Required for hooks and event handlers
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo} from 'react';
 import { Patient, Product, BillItem } from '@/types';
 import PatientInfoForm from '@/components/ui/PatientInfoForm';
 import ProductInputForm from '@/components/ui/ProductInputForm';

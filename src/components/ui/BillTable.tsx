@@ -1,7 +1,7 @@
 // src/components/BillTable.tsx
 import React from 'react';
 import { BillItem } from '@/types';
-import Button from './ui/Button'; // Import Button if you add remove functionality
+// import Button from './ui/Button'; // Import Button if you add remove functionality
 
 interface Props {
   items: BillItem[];

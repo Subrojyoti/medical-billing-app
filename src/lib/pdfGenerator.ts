@@ -12,32 +12,32 @@ declare module 'jspdf' {
 
 // Function to format number to 2 decimal places
 const formatCurrency = (value: number): string => value.toFixed(2);
-const handleGenerateBill = (
-  patient: Patient,
-  items: BillItem[],
-  subtotal: number,
-  gstAmount: number,
-  totalAmount: number
-) => {
-  try {
-      // Validation before generating PDF
-      if (!patient.name || !patient.contact || !patient.address || !patient.gender || !patient.age) {
-          console.error('Please fill in all patient details.');
-          window.scrollTo(0, 0);
-          return;
-      }
-      if (items.length === 0) {
-          console.error('Please add at least one product to the bill.');
-          return;
-      }
+// const handleGenerateBill = (
+//   patient: Patient,
+//   items: BillItem[],
+//   subtotal: number,
+//   gstAmount: number,
+//   totalAmount: number
+// ) => {
+//   try {
+//       // Validation before generating PDF
+//       if (!patient.name || !patient.contact || !patient.address || !patient.gender || !patient.age) {
+//           console.error('Please fill in all patient details.');
+//           window.scrollTo(0, 0);
+//           return;
+//       }
+//       if (items.length === 0) {
+//           console.error('Please add at least one product to the bill.');
+//           return;
+//       }
 
-      console.log('No errors in form.');
-      generateBillPdf(patient, items, subtotal, gstAmount, totalAmount);
-  } catch (error) {
-      console.error('Failed to generate bill. Please try again.');
-      console.error('Bill generation error:', error);
-  }
-};
+//       console.log('No errors in form.');
+//       generateBillPdf(patient, items, subtotal, gstAmount, totalAmount);
+//   } catch (error) {
+//       console.error('Failed to generate bill. Please try again.');
+//       console.error('Bill generation error:', error);
+//   }
+// };
 
 
 export const generateBillPdf = (
@@ -59,7 +59,7 @@ export const generateBillPdf = (
     const shopContact = process.env.NEXT_PUBLIC_SHOP_CONTACT || "";
     const shopWebsite = process.env.NEXT_PUBLIC_SHOP_WEBSITE || "";
     const shopSlogan = process.env.NEXT_PUBLIC_SHOP_SLOGAN || "";
-    const logoUrl = '/logo_placeholder.png'; // Replace with your actual logo path if available
+    // const logoUrl = '/logo_placeholder.png'; // Replace with your actual logo path if available
 
     
 
