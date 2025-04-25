@@ -2,7 +2,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable'; // Import the autoTable plugin
 import { Patient, BillItem } from '@/types';
-
+import { GState, GStateOptions } from '@/types/gstatetype';
 // Extend jsPDF interface to include autoTable
 declare module 'jspdf' {
   interface jsPDF {
@@ -241,7 +241,8 @@ export const generateBillPdf = (
         // Save the current graphics state
         doc.saveGraphicsState();
         // Set transparency
-        doc.setGState(new (doc.GState as any)({ opacity: 0.2 }));
+        const gstate = new GState({ opacity: 0.2 });
+        doc.setGState(gstate);
         // Add the image
         doc.addImage('/ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png', 'PNG', 65, currentY + 5, 70, 60);
         // Restore the graphics state
