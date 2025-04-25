@@ -83,6 +83,20 @@ export default function BillingPage() {
     generateBillPdf(patient, billItems, subtotal, gstAmount, totalAmount);
   };
 
+  const handleRemoveItem = (srNo: number) => {
+    setBillItems(prevItems => {
+      // First filter out the removed item
+      const filteredItems = prevItems.filter(item => item.srNo !== srNo);
+      // Then reorder the serial numbers
+      return filteredItems.map((item, index) => ({
+        ...item,
+        srNo: index + 1
+      }));
+    });
+    // Update nextSrNo to be the next number after the last item
+    setNextSrNo(billItems.length);
+  };
+
   // Effect to handle rendering based on auth state
   // Render null or loading indicator while checking auth to prevent flicker
   if (isAuthenticated === null) {
@@ -107,7 +121,7 @@ export default function BillingPage() {
 
          <PatientInfoForm patient={patient} onChange={handlePatientChange} />
          <ProductInputForm onAddProduct={handleAddProduct} />
-         <BillTable items={billItems} />
+         <BillTable items={billItems} onRemoveItem={handleRemoveItem} />
          <BillSummary
             subtotal={subtotal}
             gstAmount={gstAmount}

@@ -1,14 +1,14 @@
 // src/components/BillTable.tsx
 import React from 'react';
 import { BillItem } from '@/types';
-// import Button from './ui/Button'; // Import Button if you add remove functionality
+import Button from './ui/Button'; // Import Button if you add remove functionality
 
 interface Props {
   items: BillItem[];
-  // onRemoveItem?: (srNo: number) => void; // Optional: Add remove functionality
+  onRemoveItem?: (srNo: number) => void; // Optional: Add remove functionality
 }
 
-const BillTable: React.FC<Props> = ({ items /*, onRemoveItem */ }) => {
+const BillTable: React.FC<Props> = ({ items, onRemoveItem}) => {
 
   // Helper to format currency
   const formatCurrency = (value: number) => value.toFixed(2);
@@ -28,7 +28,7 @@ const BillTable: React.FC<Props> = ({ items /*, onRemoveItem */ }) => {
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12">Price</th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12">Amount</th>
               {/* Optional: Add column for remove button */}
-              {/* <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Actions</th> */}
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -40,7 +40,7 @@ const BillTable: React.FC<Props> = ({ items /*, onRemoveItem */ }) => {
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-right">{formatCurrency(item.price)}</td>
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 text-right font-medium">{formatCurrency(item.amount)}</td>
                 {/* Optional: Remove button */}
-                {/* <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
                   {onRemoveItem && (
                     <Button
                       variant="danger"
@@ -50,7 +50,7 @@ const BillTable: React.FC<Props> = ({ items /*, onRemoveItem */ }) => {
                       Remove
                     </Button>
                   )}
-                </td> */}
+                </td>
               </tr>
             ))}
           </tbody>
