@@ -234,6 +234,25 @@ export const generateBillPdf = (
         margin: { left: 15, right: 15 }
     });
 
+    // Add logo image on top of the table (overlapping)
+    try {
+      // Try to add the image with error handling
+      try {
+        // Save the current graphics state
+        doc.saveGraphicsState();
+        // Set transparency
+        doc.setGState(new (doc.GState as any)({ opacity: 0.2 }));
+        // Add the image
+        doc.addImage('/ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png', 'PNG', 65, currentY + 5, 70, 60);
+        // Restore the graphics state
+        doc.restoreGraphicsState();
+      } catch (imgError) {
+        console.error("Failed to add watermark image:", imgError);
+      }
+    } catch (e) {
+      console.error("Error in watermark process:", e);
+    }
+
     // Amount in words
     doc.setFontSize(9);
     doc.text('Rs. (In Words) :', 15, doc.lastAutoTable.finalY + 10);
