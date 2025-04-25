@@ -170,7 +170,6 @@ export default function BillingPage() {
                value={discount.toString()}
                onChange={(e) => setDiscount(Math.max(0, Number(e.target.value)))}
                min="0"
-               step="0.01"
              />
            </div>
          </div>
