@@ -10,9 +10,12 @@ import BillSummary from '@/components/ui/BillSummary';
 import Button from '@/components/ui/ui/Button';
 import { generateBillPdf } from '@/lib/pdfGenerator';
 import { useAuth } from '@/hooks/useAuth'; // Import the auth hook
+import Input from '@/components/ui/ui/Input';
+import Select from '@/components/ui/ui/Select';
 
 const initialPatientState: Patient = { name: '', address: '', contact: '', gender: '', age: '' };
-const GST_RATE = parseFloat(process.env.NEXT_PUBLIC_GST_RATE || '0.18'); // Get GST rate from env
+const CGST_RATE = parseFloat(process.env.NEXT_PUBLIC_CGST_RATE || '0.025'); // 2.5%
+const SGST_RATE = parseFloat(process.env.NEXT_PUBLIC_SGST_RATE || '0.025'); // 2.5%
 
 export default function BillingPage() {
   const { isAuthenticated, logout } = useAuth(); // Use the auth hook
@@ -21,14 +24,16 @@ export default function BillingPage() {
   const [billItems, setBillItems] = useState<BillItem[]>([]);
   const [nextSrNo, setNextSrNo] = useState<number>(1);
   const [formError, setFormError] = useState<string>('');
+  const [modeOfPayment, setModeOfPayment] = useState<string>('Cash');
+  const [discount, setDiscount] = useState<number>(0);
 
   const handlePatientChange = (field: keyof Patient, value: string) => {
     setPatient(prev => ({ ...prev, [field]: value }));
-     setFormError(''); // Clear global error on change
+    setFormError(''); // Clear global error on change
   };
 
   const handleAddProduct = (product: Product) => {
-     setFormError(''); // Clear global error on add attempt
+    setFormError(''); // Clear global error on add attempt
     // Find if product already exists (case-insensitive description match)
     const existingItemIndex = billItems.findIndex(
       item => item.description.toLowerCase() === product.description.toLowerCase()
@@ -49,10 +54,13 @@ export default function BillingPage() {
       );
     } else {
       // Add as a new item
+      const currentDate = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY format
       const newItem: BillItem = {
         ...product,
         srNo: nextSrNo,
+        type: product.type,
         amount: product.quantity * product.price,
+        date: currentDate,
       };
       setBillItems(prevItems => [...prevItems, newItem]);
       setNextSrNo(prevSrNo => prevSrNo + 1); // Increment SR# only for new items
@@ -60,12 +68,19 @@ export default function BillingPage() {
   };
 
   // Calculate totals using useMemo for optimization
-  const { subtotal, gstAmount, totalAmount } = useMemo(() => {
-    const sub = billItems.reduce((sum, item) => sum + item.amount, 0);
-    const gst = sub * GST_RATE;
-    const total = sub + gst;
-    return { subtotal: sub, gstAmount: gst, totalAmount: total };
-  }, [billItems]); // Recalculate only when billItems change
+  const { itemsTotal, cgstAmount, sgstAmount, totalAmount } = useMemo(() => {
+    const items = billItems.reduce((sum, item) => sum + item.amount, 0);
+    const afterDiscount = items - discount;
+    const cgst = afterDiscount * CGST_RATE;
+    const sgst = afterDiscount * SGST_RATE;
+    const total = afterDiscount + cgst + sgst;
+    return { 
+      itemsTotal: items,
+      cgstAmount: cgst,
+      sgstAmount: sgst,
+      totalAmount: total 
+    };
+  }, [billItems, discount]); // Recalculate only when billItems or discount change
 
   const handleGenerateBill = () => {
     // Validation before generating PDF
@@ -80,7 +95,16 @@ export default function BillingPage() {
     }
 
     setFormError(''); // Clear error if validation passes
-    generateBillPdf(patient, billItems, subtotal, gstAmount, totalAmount);
+    generateBillPdf(
+      patient,
+      billItems,
+      itemsTotal,
+      cgstAmount,
+      sgstAmount,
+      discount,
+      modeOfPayment,
+      totalAmount
+    );
   };
 
   const handleRemoveItem = (srNo: number) => {
@@ -120,13 +144,47 @@ export default function BillingPage() {
          )}
 
          <PatientInfoForm patient={patient} onChange={handlePatientChange} />
+         
+         {/* Add Mode of Payment and Discount inputs */}
+         <div className="bg-white p-6 rounded-lg shadow mb-6 border border-gray-200">
+           <h2 className="text-xl font-semibold mb-4 text-gray-800">Payment Details</h2>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <Select
+               label="Mode of Payment"
+               id="modeOfPayment"
+               name="modeOfPayment"
+               value={modeOfPayment}
+               onChange={(e) => setModeOfPayment(e.target.value)}
+               options={[
+                 { value: 'Cash', label: 'Cash' },
+                 { value: 'Card', label: 'Card' },
+                 { value: 'UPI', label: 'UPI' },
+                 { value: 'Net Banking', label: 'Net Banking' }
+               ]}
+             />
+             <Input
+               label="Discount Amount"
+               id="discount"
+               name="discount"
+               type="number"
+               value={discount.toString()}
+               onChange={(e) => setDiscount(Math.max(0, Number(e.target.value)))}
+               min="0"
+               step="0.01"
+             />
+           </div>
+         </div>
+
          <ProductInputForm onAddProduct={handleAddProduct} />
          <BillTable items={billItems} onRemoveItem={handleRemoveItem} />
          <BillSummary
-            subtotal={subtotal}
-            gstAmount={gstAmount}
+            itemsTotal={itemsTotal}
+            cgstAmount={cgstAmount}
+            sgstAmount={sgstAmount}
             totalAmount={totalAmount}
-            gstRate={GST_RATE}
+            cgstRate={CGST_RATE}
+            sgstRate={SGST_RATE}
+            discount={discount}
          />
 
          <div className="mt-8 flex justify-end">

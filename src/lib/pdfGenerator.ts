@@ -7,6 +7,9 @@ import { Patient, BillItem } from '@/types';
 declare module 'jspdf' {
   interface jsPDF {
     autoTable: typeof autoTable;
+    lastAutoTable: {
+      finalY: number;
+    };
   }
 }
 
@@ -44,208 +47,209 @@ export const generateBillPdf = (
     patient: Patient,
     items: BillItem[],
     subtotal: number,
-    gstAmount: number,
+    cgstAmount: number,
+    sgstAmount: number,
+    discount: number,
+    modeOfPayment: string,
     totalAmount: number
 ) => {
-  try{
+  try {
     const doc = new jsPDF();
     const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     const pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-    let currentY = 15; // Start position for content
+    let currentY = 15;
 
     // --- Header ---
-    const shopName = process.env.NEXT_PUBLIC_SHOP_NAME || "Medical Shop";
-    const shopAddress = process.env.NEXT_PUBLIC_SHOP_ADDRESS || "";
-    const shopContact = process.env.NEXT_PUBLIC_SHOP_CONTACT || "";
-    const shopWebsite = process.env.NEXT_PUBLIC_SHOP_WEBSITE || "";
-    const shopSlogan = process.env.NEXT_PUBLIC_SHOP_SLOGAN || "";
-    // const logoUrl = '/logo_placeholder.png'; // Replace with your actual logo path if available
+    const shopAddress = process.env.NEXT_PUBLIC_SHOP_ADDRESS || "Plot-34, Sarwasukhi Colony, West Marredpally, Secunderabad Telangana - 500026.";
+    const shopContact = process.env.NEXT_PUBLIC_SHOP_CONTACT || "9059990616, 7207675777";
+    const shopEmail = process.env.NEXT_PUBLIC_SHOP_EMAIL || "absoluteprostheticsandorthotic@gmail.com";
+    const shopGst = process.env.NEXT_PUBLIC_SHOP_GST || "36ABBCA8257A1ZX";
 
-    
+    // Add Logo
+    try {
+      doc.addImage('/ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png', 'PNG', pageWidth - 50, 10, 40, 35);
+    } catch (e) {
+      console.error("Error adding logo:", e);
+    }
 
-    // Shop Name (Centered or Left Aligned)
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.text(shopName, pageWidth / 2, currentY, { align: 'center' });
-    currentY += 7;
+    // Add Shop Name (ABSOLUTE)
+    try {
+      doc.addImage('/Shopname.png', 'PNG', 15, currentY - 5, 70, 15);
+    } catch (e) {
+      console.error("Error adding shop name image:", e);
+    }
+    currentY += 15;
 
-    // Shop Details (Centered or Left Aligned)
+    // Add Shop Tagline and Slogan on same line
+    try {
+      // Add PROSTHETICS & ORTHOTICS
+      doc.addImage('/shoptagline.png', 'PNG', 15, currentY - 5, 100, 12);
+      // Add A NEW BEGINNING... (positioned right after the tagline)
+      doc.addImage('/shopslogan.png', 'PNG', 115, currentY, 35, 5);
+    } catch (e) {
+      console.error("Error adding shop tagline and slogan images:", e);
+    }
+    currentY += 12;
+
+    // Shop Details
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    if (shopAddress) {
-      doc.text(shopAddress, pageWidth / 2, currentY, { align: 'center' });
-      currentY += 4;
-    }
-     if (shopContact) {
-      doc.text(`Contact: ${shopContact}`, pageWidth / 2, currentY, { align: 'center' });
-      currentY += 4;
-    }
-    if (shopWebsite) {
-       doc.text(`Website: ${shopWebsite}`, pageWidth / 2, currentY, { align: 'center' });
-       currentY += 4;
-    }
-     if (shopSlogan) {
-       doc.setFontSize(10);
-      doc.setFont('helvetica', 'italic');
-       doc.text(shopSlogan, pageWidth - 15, currentY - 15, { align: 'right'}); // Example position for slogan
-     }
+    doc.text(shopAddress, 15, currentY);
+    currentY += 5;
 
-
-    // Add Logo (Optional - requires image handling)
-    // Example: Assuming you have a logo file in your public folder
-    // try {
-    //   const imgData = '/path/to/your/logo.png'; // Needs proper handling for base64 or direct path
-    //   doc.addImage(imgData, 'PNG', pageWidth - 40, 10, 25, 15); // Adjust position/size
-    // } catch (e) { console.error("Error adding logo:", e); }
-
-
-    currentY += 10; // Space before Invoice title
-
-    // --- Invoice Title ---
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text('INVOICE', pageWidth / 2, currentY, { align: 'center' });
-    currentY += 10;
-
-    // --- Patient Details & Bill Info ---
+    // Contact and Email in one line
     doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    const patientBoxWidth = (pageWidth - 30) / 2; // Divide space
-    const billInfoX = 15 + patientBoxWidth + 5; // Start X for bill info
-
-    // Patient Details Box (drawRect is optional, text placement is key)
-    // doc.rect(15, currentY, patientBoxWidth, 30); // Example box
     doc.setFont('helvetica', 'bold');
-    doc.text('Patient Details:', 15, currentY + 5);
+    doc.text(`CELL : ${shopContact}    ${shopEmail}`, 15, currentY);
+    currentY += 5;
+
+    // GST Number
+    doc.setFont('helvetica', 'bold');
+    doc.text(`GST NO : ${shopGst}`, 15, currentY);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Name: ${patient.name || 'N/A'}`, 17, currentY + 10);
-    doc.text(`Address: ${patient.address || 'N/A'}`, 17, currentY + 15);
-    doc.text(`Contact: ${patient.contact || 'N/A'}`, 17, currentY + 20);
-    doc.text(`Gender: ${patient.gender || 'N/A'}`, 17, currentY + 25);
-    doc.text(`Age: ${patient.age || 'N/A'}`, 17, currentY + 30);
+    currentY += 15;
 
-    // Bill Info (Right side)
-    const billDate = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY format
-    const billNumber = `INV-${Date.now().toString().slice(-6)}`; // Simple unique number
-    doc.text(`Date: ${billDate}`, billInfoX, currentY + 5);
-    doc.text(`Invoice #: ${billNumber}`, billInfoX, currentY + 10);
-    // doc.text(`Due Date: ${billDate}`, billInfoX, currentY + 15); // Optional
-
-    currentY += 40; // Move below patient/bill info section
-
-    // --- Items Table with Totals ---
-    const tableColumnStyles = {
-        0: { cellWidth: 15 }, // SR#
-        1: { cellWidth: 80 }, // Description
-        2: { cellWidth: 15, halign: 'right' as const }, // QTY
-        3: { cellWidth: 25, halign: 'right' as const }, // PRICE
-        4: { cellWidth: 30, halign: 'right' as const }, // AMOUNT
-    };
-
-    const tableHeaders = [['SR#', 'DESCRIPTION', 'QTY', 'PRICE', 'AMOUNT']];
+    // TAX INVOICE heading with borders
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
     
-    // Regular item rows
-    const itemRows = items.map(item => [
-        item.srNo.toString(),
-        item.description,
-        item.quantity.toString(),
-        formatCurrency(item.price),
-        formatCurrency(item.amount),
-    ]);
+    // Draw line above TAX - INVOICE
+    doc.line(15, currentY - 2, pageWidth - 15, currentY - 2);
+    doc.text('TAX - INVOICE', pageWidth / 2, currentY + 8, { align: 'center' });
+    // Draw line below TAX - INVOICE
+    doc.line(15, currentY + 12, pageWidth - 15, currentY + 12);
+    currentY += 25;
 
-    // Add empty row for visual separation
-    const emptyRow = ['', '', '', '', ''];
+    // S.NO and Date on right side
+    doc.setFontSize(10);
+    doc.text('S.NO :', pageWidth - 60, currentY);
+    doc.text('Date :', pageWidth - 60, currentY + 15);
+    const currentDate = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY format
+    doc.text(currentDate, pageWidth - 35, currentY + 15);
+
+    // Patient Details Form - Very compact
+    doc.setFont('helvetica', 'normal');
+    
+    // To
+    doc.text('To :', 15, currentY);
+    doc.text(patient.name, 35, currentY);
+    currentY += 6; // Reduced from 8
+    
+    // Address
+    doc.text('Address :', 15, currentY);
+    doc.text(patient.address, 35, currentY);
+    currentY += 6; // Reduced from 8
+    
+    // Contact
+    doc.text('Contact :', 15, currentY);
+    doc.text(patient.contact, 35, currentY);
+    currentY += 6; // Reduced from 8
+    
+    // Age on one line
+    doc.text('Age :', 15, currentY);
+    doc.text(patient.age, 35, currentY);
+    currentY += 6; // Reduced from 8
+    
+    // Sex on next line
+    doc.text('Sex :', 15, currentY);
+    doc.text(patient.gender, 35, currentY);
+    currentY += 8; // Reduced from 15
+
+    // Items Table
+    const tableHeaders = [['Date', 'S.NO', 'Product', 'QTY', 'Rate', 'Amount']];
+    
+    const itemRows = items.map(item => {
+        // Split description into lines and filter out any that match the type
+        const descriptions = item.description?.split('\n')
+            .filter(desc => desc.trim() !== item.type)
+            .map(desc => `${desc.trim()}`)
+            .join('\n') || '';
+            
+        return [
+            item.date || '',
+            item.srNo.toString(),
+            `${item.type}${descriptions ? '\n' + descriptions : ''}`,
+            item.quantity.toString(),
+            formatCurrency(item.price),
+            formatCurrency(item.amount),
+        ];
+    });
 
     // Add totals rows
-    const gstRatePercent = (Number(process.env.NEXT_PUBLIC_GST_RATE) || 0.18) * 100;
     const totalsRows = [
-        ['', '', '', 'Sub-total:', formatCurrency(subtotal)],
-        ['', '', '', `GST (${gstRatePercent}%):`, formatCurrency(gstAmount)],
-        ['', '', '', 'Total Amount Due:', formatCurrency(totalAmount)]
+        ['', '', '', '', 'Mode of payment', modeOfPayment],
+        ['', '', '', '', 'Discount (-)', formatCurrency(discount)],
+        ['', '', '', '', 'CGST 2.5 % (+)', formatCurrency(cgstAmount)],
+        ['', '', '', '', 'SGST 2.5 % (+)', formatCurrency(sgstAmount)],
+        ['', '', '', '', 'Total', formatCurrency(totalAmount)]
     ];
 
     // Combine all rows
     const tableBody = [
         ...itemRows,
-        emptyRow,
         ...totalsRows
     ];
 
     // Generate table
     autoTable(doc, {
-        startY: currentY,
+        startY: currentY + 5,
         head: tableHeaders,
         body: tableBody,
         theme: 'grid',
-        headStyles: { 
-            fillColor: [22, 160, 133], 
-            textColor: [255, 255, 255], 
-            fontStyle: 'bold' 
+        styles: {
+            fontSize: 9
         },
-        columnStyles: tableColumnStyles,
+        headStyles: {
+            fillColor: [255, 255, 255],
+            textColor: [0, 0, 0],
+            fontStyle: 'bold',
+            lineWidth: 0.1
+        },
+        columnStyles: {
+            0: { cellWidth: 25 },  // Date
+            1: { cellWidth: 15 },  // S.NO
+            2: { cellWidth: 70 },  // Product (includes type and description)
+            3: { cellWidth: 15, halign: 'right' },  // QTY
+            4: { cellWidth: 25, halign: 'right' },  // Rate
+            5: { cellWidth: 25, halign: 'right' }   // Amount
+        },
         bodyStyles: {
             lineWidth: 0.1
         },
-        // Style for totals rows
         didParseCell: function(data) {
-            // Check if it's a totals row (one of the last 3 rows)
-            const isEmptyRow = data.row.index === tableBody.length - 4;
-            const isTotalsRow = data.row.index > tableBody.length - 4;
-            
-            if (isEmptyRow) {
-                data.cell.styles.lineWidth = 0;
-            }
+            const isTotalsRow = data.row.index >= itemRows.length;
             
             if (isTotalsRow) {
-                // Remove borders and background for empty cells in totals rows
-                if (data.column.index < 3) {
+                if (data.column.index < 4) {
                     data.cell.styles.lineWidth = 0;
-                    data.cell.styles.fillColor = [255, 255, 255];
                 }
-                
-                // Style for the label (4th column)
-                if (data.column.index === 3) {
-                    data.cell.styles.fontStyle = 'bold';
-                    data.cell.styles.halign = 'right';
-                    // Add right border only
-                    data.cell.styles.lineWidth = 0.1;
-                    data.cell.styles.cellPadding = 2;
-                }
-                
-                // Style for the amount (last column)
                 if (data.column.index === 4) {
                     data.cell.styles.fontStyle = 'bold';
-                    data.cell.styles.lineWidth = 0.1;
-                    data.cell.styles.cellPadding = 2;
                 }
-                
-                // Make the final row (Total Amount Due) more prominent
-                if (data.row.index === tableBody.length - 1) {
-                    if (data.column.index >= 3) {
-                        data.cell.styles.fontSize = 11;
-                        // Add bottom border for the last row
-                        data.cell.styles.lineWidth = 0.1;
-                    }
+                if (data.column.index === 5) {
+                    data.cell.styles.fontStyle = 'bold';
                 }
             }
         },
-        margin: { top: 10, right: 15, bottom: 40, left: 15 },
+        margin: { left: 15, right: 15 }
     });
 
-    // --- Footer Notes / Signature ---
-    // Example: Add total amount in words (requires a library or custom function)
-    // doc.text(`Amount in words: ${amountToWords(totalAmount)}`, 15, currentY); // Add this if needed
-    // currentY += 10;
-
+    // Amount in words
     doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Terms and Conditions: Goods once sold will not be taken back.', 15, pageHeight - 30); // Example Terms
+    doc.text('Rs. (In Words) :', 15, doc.lastAutoTable.finalY + 10);
 
-    doc.text('Signature:', pageWidth - 60, pageHeight - 30);
-    doc.text('Prepared by: Admin', pageWidth - 60, pageHeight - 25); // Or dynamically add user
-    // doc.text('Designation: Pharmacist', pageWidth - 60, pageHeight - 20);
+    // Footer
+    doc.setFontSize(8);
+    doc.text('• Goods Once sold will not be taken back.', 15, pageHeight - 30);
+    doc.text('• Subject to Hyderabad Jurisdiction', 15, pageHeight - 25);
 
-    // --- Save PDF ---
+    // Stamp and Signature with proper alignment
+    doc.text('Stamp', pageWidth/2, pageHeight - 30, { align: 'center' }); // Center aligned
+    doc.text('For Absolute Prosthetics', pageWidth - 15, pageHeight - 30, { align: 'right' }); // Right aligned
+    doc.text('Authorized Signature', pageWidth - 15, pageHeight - 20, { align: 'right' }); // Right aligned
+
+    // Save PDF
+    const billNumber = `INV-${Date.now().toString().slice(-6)}`;
     doc.save(`Invoice_${billNumber}_${patient.name || 'Patient'}.pdf`);
   } catch(error) {
     console.error("Error generating PDF:", error);

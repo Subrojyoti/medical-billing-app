@@ -23,7 +23,7 @@ const BillTable: React.FC<Props> = ({ items, onRemoveItem}) => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">SR#</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-5/12">Description</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-5/12">Product Type</th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Qty</th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12">Price</th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12">Amount</th>
@@ -35,7 +35,15 @@ const BillTable: React.FC<Props> = ({ items, onRemoveItem}) => {
             {items.map((item) => (
               <tr key={item.srNo} className="hover:bg-gray-50">
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{item.srNo}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">{item.description}</td>
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                  {item.description.split('-').map((detail, index) => (
+                    detail.trim() && (
+                      <div key={index} className={index === 0 ? "" : "ml-4"}>
+                        {index === 0 ? detail.trim() : `• ${detail.trim()}`}
+                      </div>
+                    )
+                  ))}
+                </td>
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-right">{item.quantity}</td>
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-right">{formatCurrency(item.price)}</td>
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 text-right font-medium">{formatCurrency(item.amount)}</td>
