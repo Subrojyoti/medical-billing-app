@@ -34,8 +34,8 @@ export function useAuth(redirectTo = '/login') {
 }
 
 export function checkCredentials(username?: string, password?: string): boolean {
-    const validUsername = process.env.NEXT_APP_USERNAME;
-    const validPassword = process.env.NEXT_APP_PASSWORD;
+    const validUsername = process.env.NEXT_PUBLIC_APP_USERNAME;
+    const validPassword = process.env.NEXT_PUBLIC_APP_PASSWORD;
     return username === validUsername && password === validPassword;
 }
 
