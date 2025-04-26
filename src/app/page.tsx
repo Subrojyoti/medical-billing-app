@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/app/page.tsx
 'use client'; // Required for hooks and event handlers
 
@@ -9,6 +10,7 @@ import BillTable from '@/components/ui/BillTable';
 import BillSummary from '@/components/ui/BillSummary';
 import Button from '@/components/ui/ui/Button';
 import { generateBillPdf } from '@/lib/pdfGenerator';
+import { generateQuotationPdf } from '@/lib/pdfQuotation';
 import { useAuth } from '@/hooks/useAuth'; // Import the auth hook
 import Input from '@/components/ui/ui/Input';
 import Select from '@/components/ui/ui/Select';
@@ -68,9 +70,10 @@ export default function BillingPage() {
   };
 
   // Calculate totals using useMemo for optimization
-  const { itemsTotal, cgstAmount, sgstAmount, totalAmount } = useMemo(() => {
+  const { itemsTotal, cgstAmount, sgstAmount, totalAmount, effectiveDiscount } = useMemo(() => {
     const items = billItems.reduce((sum, item) => sum + item.amount, 0);
-    const afterDiscount = items - discount;
+    const effectiveDiscount = Math.min(discount, items); // Clamp only for calculation
+    const afterDiscount = items - effectiveDiscount;
     const cgst = afterDiscount * CGST_RATE;
     const sgst = afterDiscount * SGST_RATE;
     const total = afterDiscount + cgst + sgst;
@@ -78,7 +81,8 @@ export default function BillingPage() {
       itemsTotal: items,
       cgstAmount: cgst,
       sgstAmount: sgst,
-      totalAmount: total 
+      totalAmount: total,
+      effectiveDiscount
     };
   }, [billItems, discount]); // Recalculate only when billItems or discount change
 
@@ -107,6 +111,30 @@ export default function BillingPage() {
     );
   };
 
+  const handleGenerateQuotation = () => {
+    // Validation before generating PDF
+    if (!patient.name || !patient.contact || !patient.address || !patient.gender || !patient.age) {
+      setFormError('Please fill in all patient details.');
+      window.scrollTo(0, 0); // Scroll to top to show error
+      return;
+    }
+     if (billItems.length === 0) {
+       setFormError('Please add at least one product to the quotation.');
+        return;
+    }
+
+    setFormError(''); // Clear error if validation passes
+    generateQuotationPdf(
+      patient,
+      billItems,
+      itemsTotal,
+      cgstAmount,
+      sgstAmount,
+      discount,
+      totalAmount
+    );
+  };
+
   const handleRemoveItem = (srNo: number) => {
     setBillItems(prevItems => {
       // First filter out the removed item
@@ -127,6 +155,13 @@ export default function BillingPage() {
        return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
+  const handleDiscountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Convert to number, removing leading zeros
+    const numericValue = value === '' ? 0 : parseInt(value.replace(/^0+/, ''), 10);
+    setDiscount(Math.max(0, numericValue));
+  };
+
   // If not authenticated (checked by useAuth), the hook will redirect.
   // We only render the main content if isAuthenticated is true.
   return isAuthenticated ? (
@@ -141,6 +176,13 @@ export default function BillingPage() {
                 <strong className="font-bold">Error!</strong>
                 <span className="block sm:inline"> {formError}</span>
              </div>
+         )}
+
+         {discount > itemsTotal && (
+           <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
+             <strong className="font-bold">Warning!</strong>
+             <span className="block sm:inline"> Discount cannot exceed the total bill amount. The maximum discount applied will be {itemsTotal}.</span>
+           </div>
          )}
 
          <PatientInfoForm patient={patient} onChange={handlePatientChange} />
@@ -168,7 +210,7 @@ export default function BillingPage() {
                name="discount"
                type="number"
                value={discount.toString()}
-               onChange={(e) => setDiscount(Math.max(0, Number(e.target.value)))}
+               onChange={handleDiscountChange}
                min="0"
              />
            </div>
@@ -186,7 +228,10 @@ export default function BillingPage() {
             discount={discount}
          />
 
-         <div className="mt-8 flex justify-end">
+         <div className="mt-8 flex justify-end space-x-4">
+             <Button onClick={handleGenerateQuotation} disabled={billItems.length === 0}>
+                Generate Quotation
+             </Button>
              <Button onClick={handleGenerateBill} disabled={billItems.length === 0}>
                 Generate & Download Bill (PDF)
              </Button>

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// src/lib/pdfGenerator.ts
+// src/lib/pdfQuotation.ts
 import { jsPDF, GState } from 'jspdf';
 import autoTable from 'jspdf-autotable'; // Import the autoTable plugin
 import { Patient, BillItem } from '@/types';
@@ -16,43 +16,15 @@ declare module 'jspdf' {
 
 // Function to format number to 2 decimal places
 const formatCurrency = (value: number): string => value.toFixed(2);
-// const handleGenerateBill = (
-//   patient: Patient,
-//   items: BillItem[],
-//   subtotal: number,
-//   gstAmount: number,
-//   totalAmount: number
-// ) => {
-//   try {
-//       // Validation before generating PDF
-//       if (!patient.name || !patient.contact || !patient.address || !patient.gender || !patient.age) {
-//           console.error('Please fill in all patient details.');
-//           window.scrollTo(0, 0);
-//           return;
-//       }
-//       if (items.length === 0) {
-//           console.error('Please add at least one product to the bill.');
-//           return;
-//       }
 
-//       console.log('No errors in form.');
-//       generateBillPdf(patient, items, subtotal, gstAmount, totalAmount);
-//   } catch (error) {
-//       console.error('Failed to generate bill. Please try again.');
-//       console.error('Bill generation error:', error);
-//   }
-// };
-
-
-export const generateBillPdf = (
-    patient: Patient,
-    items: BillItem[],
-    subtotal: number,
-    cgstAmount: number,
-    sgstAmount: number,
-    discount: number,
-    modeOfPayment: string,
-    totalAmount: number
+export const generateQuotationPdf = (
+  patient: Patient,
+  items: BillItem[],
+  subtotal: number,
+  cgstAmount: number,
+  sgstAmount: number,
+  discount: number,
+  totalAmount: number
 ) => {
   try {
     const doc = new jsPDF();
@@ -110,20 +82,22 @@ export const generateBillPdf = (
     doc.setFont('helvetica', 'normal');
     currentY += 15;
 
-    // TAX INVOICE heading with borders
+    // QUOTATION heading with borders
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     
-    // Draw line above TAX - INVOICE
+    // Draw line above QUOTATION
     doc.line(15, currentY - 2, pageWidth - 15, currentY - 2);
-    doc.text('TAX - INVOICE', pageWidth / 2, currentY + 8, { align: 'center' });
-    // Draw line below TAX - INVOICE
+    doc.text('QUOTATION', pageWidth / 2, currentY + 8, { align: 'center' });
+    // Draw line below QUOTATION
     doc.line(15, currentY + 12, pageWidth - 15, currentY + 12);
     currentY += 25;
 
-    // S.NO and Date on right side
+    // Quotation Number and Date on right side
     doc.setFontSize(10);
-    doc.text('S.NO :', pageWidth - 60, currentY);
+    const quotationNumber = `QT-${Date.now().toString().slice(-6)}`;
+    doc.text('S.No :', pageWidth - 60, currentY);
+    doc.text(quotationNumber, pageWidth - 35, currentY);
     doc.text('Date :', pageWidth - 60, currentY + 15);
     const currentDate = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY format
     doc.text(currentDate, pageWidth - 35, currentY + 15);
@@ -134,27 +108,27 @@ export const generateBillPdf = (
     // To
     doc.text('To :', 15, currentY);
     doc.text(patient.name, 35, currentY);
-    currentY += 6; // Reduced from 8
+    currentY += 6;
     
     // Address
     doc.text('Address :', 15, currentY);
     doc.text(patient.address, 35, currentY);
-    currentY += 6; // Reduced from 8
+    currentY += 6;
     
     // Contact
     doc.text('Contact :', 15, currentY);
     doc.text(patient.contact, 35, currentY);
-    currentY += 6; // Reduced from 8
+    currentY += 6;
     
     // Age on one line
     doc.text('Age :', 15, currentY);
     doc.text(patient.age, 35, currentY);
-    currentY += 6; // Reduced from 8
+    currentY += 6;
     
     // Sex on next line
     doc.text('Sex :', 15, currentY);
     doc.text(patient.gender, 35, currentY);
-    currentY += 8; // Reduced from 15
+    currentY += 8;
 
     // Items Table
     const tableHeaders = [['Date', 'S.NO', 'Product', 'QTY', 'Rate', 'Amount']];
@@ -176,49 +150,31 @@ export const generateBillPdf = (
         ];
     });
 
-    // Add totals rows
-    // const totalsRows = [
-    //     ['', '', '', '', 'Mode of payment', modeOfPayment],
-    //     ['', '', '', '', 'Discount (-)', formatCurrency(discount)],
-    //     ['', '', '', '', 'CGST 2.5 % (+)', formatCurrency(cgstAmount)],
-    //     ['', '', '', '', 'SGST 2.5 % (+)', formatCurrency(sgstAmount)],
-    //     ['', '', '', '', 'Total', formatCurrency(totalAmount)]
-    // ];
-
-    // Combine all rows
-    // const tableBody = [
-    //     ...itemRows,
-    //     ...totalsRows
-    // ];
+    // Calculate tax amounts based on subtotal before discount
+    const cgstOnSubtotal = subtotal * 0.025; // 2.5% CGST on full subtotal
+    const sgstOnSubtotal = subtotal * 0.025; // 2.5% SGST on full subtotal
+    const finalTotal = subtotal + cgstOnSubtotal + sgstOnSubtotal;
 
     // Generate table
     autoTable(doc, {
         startY: currentY + 5,
         head: tableHeaders,
         body: [...itemRows, 
-            [
-                { content: '', styles: { lineWidth: 0 }}, 
-                { content: '', styles: { lineWidth: 0 }}, 
-                { content: '', styles: { lineWidth: 0 }}, 
-                { content: '', styles: { lineWidth: 0 }}, 
-                { content: 'Mode of payment', styles: { fontStyle: 'bold' }}, 
-                { content: modeOfPayment, styles: { fontStyle: 'bold' }}
-            ],
-            [
-                { content: '', styles: { lineWidth: 0 }}, 
-                { content: '', styles: { lineWidth: 0 }}, 
-                { content: '', styles: { lineWidth: 0 }}, 
-                { content: '', styles: { lineWidth: 0 }}, 
-                { content: 'Discount (-)', styles: { fontStyle: 'bold' }}, 
-                { content: formatCurrency(discount), styles: { fontStyle: 'bold' }}
-            ],
+            // [
+            //     { content: '', styles: { lineWidth: 0 }}, 
+            //     { content: '', styles: { lineWidth: 0 }}, 
+            //     { content: '', styles: { lineWidth: 0 }}, 
+            //     { content: '', styles: { lineWidth: 0 }}, 
+            //     { content: 'Discount (-)', styles: { fontStyle: 'bold' }}, 
+            //     { content: formatCurrency(discount), styles: { fontStyle: 'bold' }}
+            // ],
             [
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: 'CGST 2.5 % (+)', styles: { fontStyle: 'bold' }}, 
-                { content: formatCurrency(cgstAmount), styles: { fontStyle: 'bold' }}
+                { content: formatCurrency(cgstOnSubtotal), styles: { fontStyle: 'bold' }}
             ],
             [
                 { content: '', styles: { lineWidth: 0 }}, 
@@ -226,7 +182,7 @@ export const generateBillPdf = (
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: 'SGST 2.5 % (+)', styles: { fontStyle: 'bold' }}, 
-                { content: formatCurrency(sgstAmount), styles: { fontStyle: 'bold' }}
+                { content: formatCurrency(sgstOnSubtotal), styles: { fontStyle: 'bold' }}
             ],
             [
                 { content: '', styles: { lineWidth: 0 }}, 
@@ -234,7 +190,7 @@ export const generateBillPdf = (
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: 'Total', styles: { fontStyle: 'bold' }}, 
-                { content: formatCurrency(totalAmount), styles: { fontStyle: 'bold' }}
+                { content: formatCurrency(finalTotal), styles: { fontStyle: 'bold' }}
             ],
             ['Rs. (In Words)', { content: '', colSpan: 5 }]
         ],
@@ -263,7 +219,7 @@ export const generateBillPdf = (
         },
         didDrawCell: function(data) {
             // Draw vertical lines for all columns, but only up to the Total row
-            const totalRowIndex = itemRows.length + 4; // Index of the Total row
+            const totalRowIndex = itemRows.length + 3; // Index of the Total row
             if (data.row.index >= itemRows.length && data.row.index <= totalRowIndex) {
                 const x = data.cell.x;
                 const y = data.cell.y;
@@ -329,11 +285,10 @@ export const generateBillPdf = (
     doc.text('Authorized Signature', pageWidth - 15, pageHeight - 20, { align: 'right' }); // Right aligned
 
     // Save PDF
-    const billNumber = `INV-${Date.now().toString().slice(-6)}`;
-    doc.save(`Invoice_${billNumber}_${patient.name || 'Patient'}.pdf`);
+    doc.save(`Quotation_${quotationNumber}_${patient.name || 'Patient'}.pdf`);
   } catch(error) {
     console.error("Error generating PDF:", error);
-    throw new Error("Failed to generate PDF bill. Please try again.");
+    throw new Error("Failed to generate quotation PDF. Please try again.");
   }
 };
 
