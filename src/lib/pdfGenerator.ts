@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // src/lib/pdfGenerator.ts
+import { ToWords } from 'to-words';
 import { jsPDF, GState } from 'jspdf';
 import autoTable from 'jspdf-autotable'; // Import the autoTable plugin
 import { Patient, BillItem } from '@/types';
@@ -192,6 +193,7 @@ export const generateBillPdf = (
     // ];
 
     // Generate table
+    const toWords = new ToWords();
     autoTable(doc, {
         startY: currentY + 5,
         head: tableHeaders,
@@ -236,7 +238,7 @@ export const generateBillPdf = (
                 { content: 'Total', styles: { fontStyle: 'bold' }}, 
                 { content: formatCurrency(totalAmount), styles: { fontStyle: 'bold' }}
             ],
-            ['Rs. (In Words)', { content: '', colSpan: 5 }]
+            ['Rs. (In Words)', { content: toWords.convert(totalAmount), styles: { fontStyle: 'bold' }, colSpan: 5 }]
         ],
         theme: 'grid',
         styles: {

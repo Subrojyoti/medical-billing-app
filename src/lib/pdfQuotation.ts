@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // src/lib/pdfQuotation.ts
+import { ToWords } from 'to-words';
 import { jsPDF, GState } from 'jspdf';
 import autoTable from 'jspdf-autotable'; // Import the autoTable plugin
 import { Patient, BillItem } from '@/types';
@@ -154,7 +155,7 @@ export const generateQuotationPdf = (
     const cgstOnSubtotal = subtotal * 0.025; // 2.5% CGST on full subtotal
     const sgstOnSubtotal = subtotal * 0.025; // 2.5% SGST on full subtotal
     const finalTotal = subtotal + cgstOnSubtotal + sgstOnSubtotal;
-
+    const toWords = new ToWords();
     // Generate table
     autoTable(doc, {
         startY: currentY + 5,
@@ -192,7 +193,7 @@ export const generateQuotationPdf = (
                 { content: 'Total', styles: { fontStyle: 'bold' }}, 
                 { content: formatCurrency(finalTotal), styles: { fontStyle: 'bold' }}
             ],
-            ['Rs. (In Words)', { content: '', colSpan: 5 }]
+            ['Rs. (In Words)', { content: toWords.convert(finalTotal), styles: { fontStyle: 'bold' }, colSpan: 5 }]
         ],
         theme: 'grid',
         styles: {
