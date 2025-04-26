@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/lib/pdfGenerator.ts
 import { jsPDF, GState } from 'jspdf';
 import autoTable from 'jspdf-autotable'; // Import the autoTable plugin
@@ -176,13 +177,13 @@ export const generateBillPdf = (
     });
 
     // Add totals rows
-    const totalsRows = [
-        ['', '', '', '', 'Mode of payment', modeOfPayment],
-        ['', '', '', '', 'Discount (-)', formatCurrency(discount)],
-        ['', '', '', '', 'CGST 2.5 % (+)', formatCurrency(cgstAmount)],
-        ['', '', '', '', 'SGST 2.5 % (+)', formatCurrency(sgstAmount)],
-        ['', '', '', '', 'Total', formatCurrency(totalAmount)]
-    ];
+    // const totalsRows = [
+    //     ['', '', '', '', 'Mode of payment', modeOfPayment],
+    //     ['', '', '', '', 'Discount (-)', formatCurrency(discount)],
+    //     ['', '', '', '', 'CGST 2.5 % (+)', formatCurrency(cgstAmount)],
+    //     ['', '', '', '', 'SGST 2.5 % (+)', formatCurrency(sgstAmount)],
+    //     ['', '', '', '', 'Total', formatCurrency(totalAmount)]
+    // ];
 
     // Combine all rows
     // const tableBody = [
