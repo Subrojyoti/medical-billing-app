@@ -194,10 +194,54 @@ export const generateBillPdf = (
     autoTable(doc, {
         startY: currentY + 5,
         head: tableHeaders,
-        body: tableBody,
+        body: [...itemRows, 
+            [
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: 'Mode of payment', styles: { fontStyle: 'bold' }}, 
+                { content: modeOfPayment, styles: { fontStyle: 'bold' }}
+            ],
+            [
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: 'Discount (-)', styles: { fontStyle: 'bold' }}, 
+                { content: formatCurrency(discount), styles: { fontStyle: 'bold' }}
+            ],
+            [
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: 'CGST 2.5 % (+)', styles: { fontStyle: 'bold' }}, 
+                { content: formatCurrency(cgstAmount), styles: { fontStyle: 'bold' }}
+            ],
+            [
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: 'SGST 2.5 % (+)', styles: { fontStyle: 'bold' }}, 
+                { content: formatCurrency(sgstAmount), styles: { fontStyle: 'bold' }}
+            ],
+            [
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: '', styles: { lineWidth: 0 }}, 
+                { content: 'Total', styles: { fontStyle: 'bold' }}, 
+                { content: formatCurrency(totalAmount), styles: { fontStyle: 'bold' }}
+            ],
+            ['Rs. (In Words) :', { content: '', colSpan: 5 }]
+        ],
         theme: 'grid',
         styles: {
-            fontSize: 9
+            fontSize: 9,
+            lineWidth: 0.1,
+            cellPadding: 2
         },
         headStyles: {
             fillColor: [255, 255, 255],
@@ -208,7 +252,7 @@ export const generateBillPdf = (
         columnStyles: {
             0: { cellWidth: 25 },  // Date
             1: { cellWidth: 15 },  // S.NO
-            2: { cellWidth: 70 },  // Product (includes type and description)
+            2: { cellWidth: 70 },  // Product
             3: { cellWidth: 15, halign: 'right' },  // QTY
             4: { cellWidth: 25, halign: 'right' },  // Rate
             5: { cellWidth: 25, halign: 'right' }   // Amount
@@ -216,22 +260,41 @@ export const generateBillPdf = (
         bodyStyles: {
             lineWidth: 0.1
         },
-        didParseCell: function(data) {
-            const isTotalsRow = data.row.index >= itemRows.length;
-            
-            if (isTotalsRow) {
-                if (data.column.index < 4) {
-                    data.cell.styles.lineWidth = 0;
-                }
-                if (data.column.index === 4) {
-                    data.cell.styles.fontStyle = 'bold';
-                }
-                if (data.column.index === 5) {
-                    data.cell.styles.fontStyle = 'bold';
+        didDrawCell: function(data) {
+            // Draw vertical lines for all columns, but only up to the Total row
+            const totalRowIndex = itemRows.length + 4; // Index of the Total row
+            if (data.row.index >= itemRows.length && data.row.index <= totalRowIndex) {
+                const x = data.cell.x;
+                const y = data.cell.y;
+                const height = data.cell.height;
+                
+                // Draw vertical lines
+                if (data.column.index < 5) {  // Draw for all columns except the last
+                    doc.line(
+                        x + data.cell.width,  // x1
+                        y,                    // y1
+                        x + data.cell.width,  // x2
+                        y + height            // y2
+                    );
                 }
             }
         },
-        margin: { left: 15, right: 15 }
+        didDrawPage: function(data) {
+            // Draw bottom border after the table is complete
+            const lastRow = data.table.body[data.table.body.length - 1];
+            if (lastRow) {
+                const y = lastRow.cells[0].y + lastRow.cells[0].height;
+                doc.line(
+                    15,                                // x1 (left margin)
+                    y,                                // y1
+                    doc.internal.pageSize.width - 20,  // x2 (page width minus right margin)
+                    y                                 // y2
+                );
+            }
+        },
+        margin: { left: 15, right: 20 },
+        tableLineWidth: 0.1,
+        tableLineColor: [0, 0, 0]
     });
 
     // Add logo image on top of the table (overlapping)
@@ -253,10 +316,6 @@ export const generateBillPdf = (
     } catch (e) {
       console.error("Error in watermark process:", e);
     }
-
-    // Amount in words
-    doc.setFontSize(9);
-    doc.text('Rs. (In Words) :', 15, doc.lastAutoTable.finalY + 10);
 
     // Footer
     doc.setFontSize(8);
