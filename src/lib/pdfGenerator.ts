@@ -124,10 +124,12 @@ export const generateBillPdf = (
 
     // S.NO and Date on right side
     doc.setFontSize(10);
+    const serialNumber = `INV-${patient.serialNo}`;
     doc.text('S.NO :', pageWidth - 60, currentY);
+    doc.text(serialNumber, pageWidth - 40, currentY);
     doc.text('Date :', pageWidth - 60, currentY + 15);
     const currentDate = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY format
-    doc.text(currentDate, pageWidth - 35, currentY + 15);
+    doc.text(currentDate, pageWidth - 40, currentY + 15);
 
     // Patient Details Form - Very compact
     doc.setFont('helvetica', 'normal');

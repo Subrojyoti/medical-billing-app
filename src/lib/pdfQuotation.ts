@@ -96,12 +96,12 @@ export const generateQuotationPdf = (
 
     // Quotation Number and Date on right side
     doc.setFontSize(10);
-    const quotationNumber = `QT-${Date.now().toString().slice(-6)}`;
+    const quotationNumber = `QT-${patient.serialNo}`;
     doc.text('S.No :', pageWidth - 60, currentY);
-    doc.text(quotationNumber, pageWidth - 35, currentY);
+    doc.text(quotationNumber, pageWidth - 40, currentY);
     doc.text('Date :', pageWidth - 60, currentY + 15);
     const currentDate = new Date().toLocaleDateString('en-GB'); // DD/MM/YYYY format
-    doc.text(currentDate, pageWidth - 35, currentY + 15);
+    doc.text(currentDate, pageWidth - 40, currentY + 15);
 
     // Patient Details Form - Very compact
     doc.setFont('helvetica', 'normal');

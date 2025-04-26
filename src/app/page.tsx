@@ -15,7 +15,7 @@ import { useAuth } from '@/hooks/useAuth'; // Import the auth hook
 import Input from '@/components/ui/ui/Input';
 import Select from '@/components/ui/ui/Select';
 
-const initialPatientState: Patient = { name: '', address: '', contact: '', gender: '', age: '' };
+const initialPatientState: Patient = { name: '', address: '', contact: '', gender: '', age: '', serialNo: '' };
 const CGST_RATE = parseFloat(process.env.NEXT_PUBLIC_CGST_RATE || '0.025'); // 2.5%
 const SGST_RATE = parseFloat(process.env.NEXT_PUBLIC_SGST_RATE || '0.025'); // 2.5%
 
@@ -88,7 +88,7 @@ export default function BillingPage() {
 
   const handleGenerateBill = () => {
     // Validation before generating PDF
-    if (!patient.name || !patient.contact || !patient.address || !patient.gender || !patient.age) {
+    if (!patient.name || !patient.contact || !patient.address || !patient.gender || !patient.age || !patient.serialNo) {
       setFormError('Please fill in all patient details.');
       window.scrollTo(0, 0); // Scroll to top to show error
       return;
@@ -113,7 +113,7 @@ export default function BillingPage() {
 
   const handleGenerateQuotation = () => {
     // Validation before generating PDF
-    if (!patient.name || !patient.contact || !patient.address || !patient.gender || !patient.age) {
+    if (!patient.name || !patient.contact || !patient.address || !patient.gender || !patient.age || !patient.serialNo) {
       setFormError('Please fill in all patient details.');
       window.scrollTo(0, 0); // Scroll to top to show error
       return;
@@ -167,7 +167,7 @@ export default function BillingPage() {
   return isAuthenticated ? (
      <div className="container mx-auto p-4 md:p-8 max-w-6xl bg-gray-50 min-h-screen">
           <header className="flex justify-between items-center mb-6 pb-4 border-b border-gray-300">
-            <h1 className="text-3xl font-bold text-gray-800">Medical Shop Billing</h1>
+            <h1 className="text-3xl font-bold text-gray-800">Absolute Prosthetics & Orthotics Billing</h1>
              <Button onClick={logout} variant="secondary">Logout</Button>
           </header>
 

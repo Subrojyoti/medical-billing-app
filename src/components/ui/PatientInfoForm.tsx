@@ -69,6 +69,14 @@ const PatientInfoForm: React.FC<Props> = ({ patient, onChange }) => {
           onChange={handleChange}
           required
         />
+        <Input
+          label="Serial No."
+          id="serialNo"
+          name="serialNo"
+          value={patient.serialNo}
+          onChange={handleChange}
+          required
+        />
       </div>
     </div>
   );

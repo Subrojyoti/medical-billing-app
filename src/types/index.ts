@@ -5,6 +5,7 @@ export interface Patient {
     contact: string;
     gender: string;
     age: string; // Using string for flexibility, could be number if strict validation is added
+    serialNo: string;
   }
   
   export interface Product {
