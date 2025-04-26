@@ -185,10 +185,10 @@ export const generateBillPdf = (
     ];
 
     // Combine all rows
-    const tableBody = [
-        ...itemRows,
-        ...totalsRows
-    ];
+    // const tableBody = [
+    //     ...itemRows,
+    //     ...totalsRows
+    // ];
 
     // Generate table
     autoTable(doc, {
