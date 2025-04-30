@@ -168,16 +168,29 @@ export const generateBillPdf = (
             .filter(desc => desc.trim() !== item.type)
             .map(desc => `${desc.trim()}`)
             .join('\n') || '';
-            
+        let rate, amount;
+        if (item.isPriceInclGst) {
+          const basePrice = item.price / 1.05;
+          rate = formatCurrency(basePrice);
+          amount = formatCurrency(basePrice * item.quantity);
+        } else {
+          rate = formatCurrency(item.price);
+          amount = formatCurrency(item.price * item.quantity);
+        }
         return [
             item.date || '',
             item.srNo.toString(),
             `${item.type}${descriptions ? '\n' + descriptions : ''}`,
             item.quantity.toString(),
-            formatCurrency(item.price),
-            formatCurrency(item.amount),
+            rate,
+            amount,
         ];
     });
+
+    // Calculate tax amounts based on subtotal before discount
+    const baseSubtotal = subtotal - cgstAmount - sgstAmount;
+    const cgstOnSubtotal = baseSubtotal * 0.025; // 2.5% CGST on base subtotal
+    const sgstOnSubtotal = baseSubtotal * 0.025; // 2.5% SGST on base subtotal
 
     // Add totals rows
     // const totalsRows = [

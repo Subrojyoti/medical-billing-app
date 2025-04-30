@@ -63,6 +63,7 @@ export default function BillingPage() {
         type: product.type,
         amount: product.quantity * product.price,
         date: currentDate,
+        isPriceInclGst: product.isPriceInclGst,
       };
       setBillItems(prevItems => [...prevItems, newItem]);
       setNextSrNo(prevSrNo => prevSrNo + 1); // Increment SR# only for new items
@@ -71,34 +72,39 @@ export default function BillingPage() {
 
   // Calculate totals using useMemo for optimization
   const { itemsTotal, cgstAmount, sgstAmount, totalAmount, effectiveDiscount } = useMemo(() => {
-    const items = billItems.reduce((sum, item) => sum + item.amount, 0);
-    const effectiveDiscount = Math.min(discount, items); // Clamp only for calculation
-    const afterDiscount = items - effectiveDiscount;
-    const cgst = items * CGST_RATE;
-    const sgst = items * SGST_RATE;
-    const total = afterDiscount;
-    return { 
-      itemsTotal: items,
-      cgstAmount: cgst,
-      sgstAmount: sgst,
-      totalAmount: total,
-      effectiveDiscount
-    };
-  }, [billItems, discount]); // Recalculate only when billItems or discount change
+    let itemsTotal = 0;
+    let cgstAmount = 0;
+    let sgstAmount = 0;
+    let allItemsInclGst = true;
 
-  const getBillItemsExcludingGST = () => {
-    return billItems.map(item => {
-      const cgst = item.price * CGST_RATE;
-      const sgst = item.price * SGST_RATE;
-      const revisedPrice = item.price - cgst - sgst;
-      const revisedAmount = item.quantity * revisedPrice;
-      return {
-        ...item,
-        price: revisedPrice,
-        amount: revisedAmount,
-      };
+    billItems.forEach(item => {
+      if (item.isPriceInclGst) {
+        const base = item.price / (1 + CGST_RATE + SGST_RATE);
+        const cgst = base * CGST_RATE;
+        const sgst = base * SGST_RATE;
+        itemsTotal += item.price * item.quantity;
+        cgstAmount += cgst * item.quantity;
+        sgstAmount += sgst * item.quantity;
+      } else {
+        allItemsInclGst = false;
+        const cgst = item.price * CGST_RATE;
+        const sgst = item.price * SGST_RATE;
+        itemsTotal += item.price * item.quantity;
+        cgstAmount += cgst * item.quantity;
+        sgstAmount += sgst * item.quantity;
+      }
     });
-  };
+
+    const effectiveDiscount = Math.min(discount, itemsTotal);
+    let totalAmount;
+    if (allItemsInclGst) {
+      totalAmount = itemsTotal - effectiveDiscount;
+    } else {
+      totalAmount = itemsTotal + cgstAmount + sgstAmount - effectiveDiscount;
+    }
+
+    return { itemsTotal, cgstAmount, sgstAmount, totalAmount, effectiveDiscount };
+  }, [billItems, discount]);
 
   const handleGenerateBill = () => {
     // Validation before generating PDF
@@ -115,7 +121,7 @@ export default function BillingPage() {
     setFormError(''); // Clear error if validation passes
     generateBillPdf(
       patient,
-      getBillItemsExcludingGST(),
+      billItems,
       itemsTotal,
       cgstAmount,
       sgstAmount,
@@ -140,7 +146,7 @@ export default function BillingPage() {
     setFormError(''); // Clear error if validation passes
     generateQuotationPdf(
       patient,
-      getBillItemsExcludingGST(),
+      billItems,
       itemsTotal,
       cgstAmount,
       sgstAmount,

@@ -15,9 +15,26 @@ const initialProductState: Product = {
   price: 0 
 };
 
+const GST_RATE = 0.18;
+const CGST_RATE = 0.025;
+const SGST_RATE = 0.025;
+
 const ProductInputForm: React.FC<Props> = ({ onAddProduct }) => {
   const [product, setProduct] = useState<Product>(initialProductState);
+  const [priceExclGst, setPriceExclGst] = useState<string>('');
+  const [priceInclGst, setPriceInclGst] = useState<string>('');
+  const [editingField, setEditingField] = useState<'incl' | 'excl' | null>(null);
+  const [isPriceInclGst, setIsPriceInclGst] = useState<boolean | null>(null);
   const [error, setError] = useState<string>('');
+
+  // Update both price fields when product changes (for reset)
+  React.useEffect(() => {
+    if (product.price === 0) {
+      setPriceExclGst('');
+      setPriceInclGst('');
+      setEditingField(null);
+    }
+  }, [product.price]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -94,8 +111,27 @@ const ProductInputForm: React.FC<Props> = ({ onAddProduct }) => {
     }
   };
 
+  // Handle Excluding GST input
+  const handlePriceExclChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPriceExclGst(value);
+    if (value) {
+      setPriceInclGst('');
+      setIsPriceInclGst(false);
+    }
+  };
+
+  // Handle Including GST input
+  const handlePriceInclChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPriceInclGst(value);
+    if (value) {
+      setPriceExclGst('');
+      setIsPriceInclGst(true);
+    }
+  };
+
   const handleAddClick = () => {
-    // Basic Validation
     if (!product.type.trim()) {
       setError('Product type is required.');
       return;
@@ -108,20 +144,32 @@ const ProductInputForm: React.FC<Props> = ({ onAddProduct }) => {
       setError('Quantity must be greater than zero.');
       return;
     }
-    if (product.price <= 0) {
+    
+    let price = 0;
+    if (isPriceInclGst && priceInclGst) {
+      // When price includes GST, use the price directly
+      price = parseFloat(priceInclGst);
+    } else if (isPriceInclGst === false && priceExclGst) {
+      // When price excludes GST, use the price directly
+      price = parseFloat(priceExclGst);
+    }
+    
+    if (!price || price <= 0) {
       setError('Price must be greater than zero.');
       return;
     }
-
-    // Format description to include product type as header
-    const formattedDescription = `${product.type}\n${formatDescriptionWithBullets(product.description)}`;
     
+    const formattedDescription = `${product.type}\n${formatDescriptionWithBullets(product.description)}`;
     onAddProduct({
       ...product,
+      price: price,
+      isPriceInclGst: isPriceInclGst ?? false,
       description: formattedDescription
     });
-    
     setProduct(initialProductState);
+    setPriceExclGst('');
+    setPriceInclGst('');
+    setIsPriceInclGst(null);
     setError('');
   };
 
@@ -174,16 +222,32 @@ const ProductInputForm: React.FC<Props> = ({ onAddProduct }) => {
           </div>
           <div>
             <Input
-              label="Price (per unit) (Including GST)"
-              id="price"
-              name="price"
+              label="Price (per unit) (Excluding GST)"
+              id="priceExclGst"
+              name="priceExclGst"
               type="number"
               min="0.01"
               step="0.01"
-              value={product.price.toString()}
-              onChange={handleChange}
+              value={priceExclGst}
+              onChange={handlePriceExclChange}
               required
               className="w-full"
+              disabled={!!priceInclGst}
+            />
+          </div>
+          <div>
+            <Input
+              label="Price (per unit) (Including GST)"
+              id="priceInclGst"
+              name="priceInclGst"
+              type="number"
+              min="0.01"
+              step="0.01"
+              value={priceInclGst}
+              onChange={handlePriceInclChange}
+              required
+              className="w-full"
+              disabled={!!priceExclGst}
             />
           </div>
         </div>

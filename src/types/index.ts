@@ -13,6 +13,7 @@ export interface Patient {
     description: string;
     quantity: number;
     price: number;
+    isPriceInclGst?: boolean;
   }
   
   export interface BillItem {
@@ -23,4 +24,5 @@ export interface Patient {
     price: number;
     amount: number;
     date: string;
+    isPriceInclGst?: boolean;
   }

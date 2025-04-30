@@ -33,8 +33,14 @@ const BillTable: React.FC<Props> = ({ items, onRemoveItem}) => {
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">SR#</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-5/12">Product Type</th>
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Qty</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12">Price</th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12">Amount</th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12">
+                Price
+                <span className="ml-1 bg-yellow-100 text-yellow-700 text-[10px] px-2 py-0.5 rounded align-middle">Excl. GST</span>
+              </th>
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-2/12">
+                Amount
+                <span className="ml-1 bg-yellow-100 text-yellow-700 text-[10px] px-2 py-0.5 rounded align-middle">Excl. GST</span>
+              </th>
               {/* Optional: Add column for remove button */}
               <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12">Actions</th>
             </tr>
@@ -53,8 +59,16 @@ const BillTable: React.FC<Props> = ({ items, onRemoveItem}) => {
                   ))}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-right">{item.quantity}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-right">{formatCurrency(calculateBasePrice(item.price))}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 text-right font-medium">{formatCurrency(calculateBasePrice(item.amount))}</td>
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
+                  {item.isPriceInclGst
+                    ? (item.price / 1.05).toFixed(2)
+                    : item.price.toFixed(2)}
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 text-right font-medium">
+                  {item.isPriceInclGst
+                    ? (item.price / 1.05 * item.quantity).toFixed(2)
+                    : (item.price * item.quantity).toFixed(2)}
+                </td>
                 {/* Optional: Remove button */}
                 <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
                   {onRemoveItem && (
