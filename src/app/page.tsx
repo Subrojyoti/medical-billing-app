@@ -16,8 +16,8 @@ import Input from '@/components/ui/ui/Input';
 import Select from '@/components/ui/ui/Select';
 
 const initialPatientState: Patient = { name: '', address: '', contact: '', gender: '', age: '', serialNo: '' };
-const CGST_RATE = parseFloat(process.env.NEXT_PUBLIC_CGST_RATE || '0.025'); // 2.5%
-const SGST_RATE = parseFloat(process.env.NEXT_PUBLIC_SGST_RATE || '0.025'); // 2.5%
+const CGST_RATE = 0.025; // 2.5% fixed
+const SGST_RATE = 0.025; // 2.5% fixed
 
 export default function BillingPage() {
   const { isAuthenticated, logout } = useAuth(); // Use the auth hook
@@ -74,9 +74,9 @@ export default function BillingPage() {
     const items = billItems.reduce((sum, item) => sum + item.amount, 0);
     const effectiveDiscount = Math.min(discount, items); // Clamp only for calculation
     const afterDiscount = items - effectiveDiscount;
-    const cgst = afterDiscount * CGST_RATE;
-    const sgst = afterDiscount * SGST_RATE;
-    const total = afterDiscount + cgst + sgst;
+    const cgst = items * CGST_RATE;
+    const sgst = items * SGST_RATE;
+    const total = afterDiscount;
     return { 
       itemsTotal: items,
       cgstAmount: cgst,
@@ -85,6 +85,20 @@ export default function BillingPage() {
       effectiveDiscount
     };
   }, [billItems, discount]); // Recalculate only when billItems or discount change
+
+  const getBillItemsExcludingGST = () => {
+    return billItems.map(item => {
+      const cgst = item.price * CGST_RATE;
+      const sgst = item.price * SGST_RATE;
+      const revisedPrice = item.price - cgst - sgst;
+      const revisedAmount = item.quantity * revisedPrice;
+      return {
+        ...item,
+        price: revisedPrice,
+        amount: revisedAmount,
+      };
+    });
+  };
 
   const handleGenerateBill = () => {
     // Validation before generating PDF
@@ -101,7 +115,7 @@ export default function BillingPage() {
     setFormError(''); // Clear error if validation passes
     generateBillPdf(
       patient,
-      billItems,
+      getBillItemsExcludingGST(),
       itemsTotal,
       cgstAmount,
       sgstAmount,
@@ -126,7 +140,7 @@ export default function BillingPage() {
     setFormError(''); // Clear error if validation passes
     generateQuotationPdf(
       patient,
-      billItems,
+      getBillItemsExcludingGST(),
       itemsTotal,
       cgstAmount,
       sgstAmount,

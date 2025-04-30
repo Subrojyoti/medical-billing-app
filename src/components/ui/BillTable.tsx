@@ -13,6 +13,14 @@ const BillTable: React.FC<Props> = ({ items, onRemoveItem}) => {
   // Helper to format currency
   const formatCurrency = (value: number) => value.toFixed(2);
 
+  // Helper to calculate base price by subtracting GST
+  const calculateBasePrice = (totalPrice: number) => {
+    // Subtract 2.5% CGST and 2.5% SGST
+    const cgst = totalPrice * 0.025;
+    const sgst = totalPrice * 0.025;
+    return totalPrice - cgst - sgst;
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow border border-gray-200 overflow-x-auto"> {/* Add overflow for small screens */}
       <h2 className="text-xl font-semibold mb-4 text-gray-800">Bill Details</h2>
@@ -45,8 +53,8 @@ const BillTable: React.FC<Props> = ({ items, onRemoveItem}) => {
                   ))}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-right">{item.quantity}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-right">{formatCurrency(item.price)}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 text-right font-medium">{formatCurrency(item.amount)}</td>
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 text-right">{formatCurrency(calculateBasePrice(item.price))}</td>
+                <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 text-right font-medium">{formatCurrency(calculateBasePrice(item.amount))}</td>
                 {/* Optional: Remove button */}
                 <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
                   {onRemoveItem && (

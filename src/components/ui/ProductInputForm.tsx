@@ -174,7 +174,7 @@ const ProductInputForm: React.FC<Props> = ({ onAddProduct }) => {
           </div>
           <div>
             <Input
-              label="Price (per unit)"
+              label="Price (per unit) (Including GST)"
               id="price"
               name="price"
               type="number"

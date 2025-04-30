@@ -154,7 +154,7 @@ export const generateQuotationPdf = (
     // Calculate tax amounts based on subtotal before discount
     const cgstOnSubtotal = subtotal * 0.025; // 2.5% CGST on full subtotal
     const sgstOnSubtotal = subtotal * 0.025; // 2.5% SGST on full subtotal
-    let finalTotal = subtotal + cgstOnSubtotal + sgstOnSubtotal;
+    let finalTotal = totalAmount + discount
     // Always round to 2 decimals for currency
     const roundedTotal = Math.round(finalTotal * 100) / 100;
     const toWords = new ToWords();
