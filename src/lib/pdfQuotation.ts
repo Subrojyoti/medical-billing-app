@@ -159,11 +159,27 @@ export const generateQuotationPdf = (
         ];
     });
 
-    // Calculate tax amounts based on subtotal before discount
-    const baseSubtotal = subtotal - cgstAmount - sgstAmount;
-    const cgstOnSubtotal = baseSubtotal * 0.025; // 2.5% CGST on base subtotal
-    const sgstOnSubtotal = baseSubtotal * 0.025; // 2.5% SGST on base subtotal
-    let finalTotal = totalAmount + discount
+    // Calculate CGST and SGST for all items (reverse-calculate for GST-inclusive)
+    let totalCgst = 0;
+    let totalSgst = 0;
+    let totalAmount = 0;
+    items.forEach(item => {
+      if (item.isPriceInclGst) {
+        const base = item.price / 1.05;
+        const cgst = base * 0.025 * item.quantity;
+        const sgst = base * 0.025 * item.quantity;
+        totalCgst += cgst;
+        totalSgst += sgst;
+        totalAmount += item.price * item.quantity;
+      } else {
+        const cgst = item.price * 0.025 * item.quantity;
+        const sgst = item.price * 0.025 * item.quantity;
+        totalCgst += cgst;
+        totalSgst += sgst;
+        totalAmount += (item.price + item.price * 0.05) * item.quantity;
+      }
+    });
+    let finalTotal = totalAmount - discount;
     // Always round to 2 decimals for currency
     const roundedTotal = Math.round(finalTotal * 100) / 100;
     const toWords = new ToWords();
@@ -182,21 +198,13 @@ export const generateQuotationPdf = (
         startY: currentY + 5,
         head: tableHeaders,
         body: [...itemRows, 
-            // [
-            //     { content: '', styles: { lineWidth: 0 }}, 
-            //     { content: '', styles: { lineWidth: 0 }}, 
-            //     { content: '', styles: { lineWidth: 0 }}, 
-            //     { content: '', styles: { lineWidth: 0 }}, 
-            //     { content: 'Discount (-)', styles: { fontStyle: 'bold' }}, 
-            //     { content: formatCurrency(discount), styles: { fontStyle: 'bold' }}
-            // ],
             [
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: 'CGST 2.5 % (+)', styles: { fontStyle: 'bold' }}, 
-                { content: formatCurrency(cgstOnSubtotal), styles: { fontStyle: 'bold' }}
+                { content: formatCurrency(totalCgst), styles: { fontStyle: 'bold' }}
             ],
             [
                 { content: '', styles: { lineWidth: 0 }}, 
@@ -204,7 +212,7 @@ export const generateQuotationPdf = (
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: 'SGST 2.5 % (+)', styles: { fontStyle: 'bold' }}, 
-                { content: formatCurrency(sgstOnSubtotal), styles: { fontStyle: 'bold' }}
+                { content: formatCurrency(totalSgst), styles: { fontStyle: 'bold' }}
             ],
             [
                 { content: '', styles: { lineWidth: 0 }}, 
@@ -212,7 +220,7 @@ export const generateQuotationPdf = (
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: 'Total', styles: { fontStyle: 'bold' }}, 
-                { content: formatCurrency(roundedTotal), styles: { fontStyle: 'bold' }}
+                { content: formatCurrency(finalTotal), styles: { fontStyle: 'bold' }}
             ],
             ['Rs. (In Words)', { content: inWords, styles: { fontStyle: 'bold' }, colSpan: 5 }]
         ],
