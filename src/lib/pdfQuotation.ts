@@ -154,8 +154,20 @@ export const generateQuotationPdf = (
     // Calculate tax amounts based on subtotal before discount
     const cgstOnSubtotal = subtotal * 0.025; // 2.5% CGST on full subtotal
     const sgstOnSubtotal = subtotal * 0.025; // 2.5% SGST on full subtotal
-    const finalTotal = subtotal + cgstOnSubtotal + sgstOnSubtotal;
+    let finalTotal = subtotal + cgstOnSubtotal + sgstOnSubtotal;
+    // Always round to 2 decimals for currency
+    const roundedTotal = Math.round(finalTotal * 100) / 100;
     const toWords = new ToWords();
+    let rupees = Math.floor(roundedTotal);
+    let paise = Math.round((roundedTotal - rupees) * 100);
+    if (paise === 100) {
+      rupees += 1;
+      paise = 0;
+    }
+    let inWords = toWords.convert(rupees) + ' Rupees';
+    if (paise > 0) {
+      inWords += ' and ' + toWords.convert(paise) + ' Paise';
+    }
     // Generate table
     autoTable(doc, {
         startY: currentY + 5,
@@ -191,9 +203,9 @@ export const generateQuotationPdf = (
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: '', styles: { lineWidth: 0 }}, 
                 { content: 'Total', styles: { fontStyle: 'bold' }}, 
-                { content: formatCurrency(finalTotal), styles: { fontStyle: 'bold' }}
+                { content: formatCurrency(roundedTotal), styles: { fontStyle: 'bold' }}
             ],
-            ['Rs. (In Words)', { content: toWords.convert(finalTotal), styles: { fontStyle: 'bold' }, colSpan: 5 }]
+            ['Rs. (In Words)', { content: inWords, styles: { fontStyle: 'bold' }, colSpan: 5 }]
         ],
         theme: 'grid',
         styles: {
