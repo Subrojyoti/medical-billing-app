@@ -352,13 +352,15 @@ export const generateBillPdf = (
     doc.text('• Goods Once sold will not be taken back.', 15, pageHeight - 30);
     doc.text('• Subject to Hyderabad Jurisdiction', 15, pageHeight - 25);
 
+    doc.setFont("helvetica", "bold");
+    doc.text('For Absolute Prosthetics', pageWidth - 20, pageHeight - 55, { align: 'right' }); // Right aligned
     // Stamp and Signature with proper alignment
-    doc.text('Stamp', pageWidth/2, pageHeight - 30, { align: 'center' }); // Center aligned
-    doc.text('For Absolute Prosthetics', pageWidth - 15, pageHeight - 30, { align: 'right' }); // Right aligned
-    doc.text('Authorized Signature', pageWidth - 15, pageHeight - 20, { align: 'right' }); // Right aligned
+    doc.addImage('/stamp.png', 'PNG', pageWidth - 50, pageHeight - 52, 32, 30);
+    doc.setFont("helvetica", "normal");
+    doc.text('Authorized Signature', pageWidth - 20, pageHeight - 20, { align: 'right' }); // Right aligned
 
     // Save PDF
-    const billNumber = `INV-${Date.now().toString().slice(-6)}`;
+    const billNumber = `${serialNumber}`;
     doc.save(`Invoice_${billNumber}_${patient.name || 'Patient'}.pdf`);
   } catch(error) {
     console.error("Error generating PDF:", error);
