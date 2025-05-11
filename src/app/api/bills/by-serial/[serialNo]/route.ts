@@ -2,6 +2,26 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import Bill from '@/model/Bill';
 
+// Define the Bill interface based on the schema
+interface BillDocument {
+  serialNo: string;
+  patientName: string;
+  patientAddress: string;
+  patientContact: string;
+  patientAge: string;
+  patientGender: string;
+  items: Array<{
+    description: string;
+    quantity: number;
+    rate: number;
+    amount: number;
+  }>;
+  totalAmount: number;
+  discount?: number;
+  cgstAmount?: number;
+  sgstAmount?: number;
+}
+
 export async function GET(
   request: Request,
   { params }: { params: { serialNo: string } }
@@ -10,7 +30,7 @@ export async function GET(
     await connectToDatabase();
     const { serialNo } = params;
 
-    const bill = await Bill.findOne({ serialNo }).lean();
+    const bill = await Bill.findOne({ serialNo }).lean() as BillDocument | null;
     
     if (!bill) {
       return NextResponse.json({ error: 'Bill not found' }, { status: 404 });
