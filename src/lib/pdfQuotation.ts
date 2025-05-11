@@ -278,8 +278,47 @@ export const generateQuotationPdf = (
                     y                                 // y2
                 );
             }
+
+            // Add footer on each page
+            const footerY = doc.internal.pageSize.height - 85;
+            
+            // Terms and Conditions
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "bold");
+            doc.text('Terms and Conditions :', 20, footerY);
+            doc.setFontSize(8);
+            doc.setFont("helvetica", "normal");
+            doc.text('1.  50% advance payment during the booking and balance amount on fitment', 15, footerY + 5);
+            doc.text('2.  The Cheque or NEFT should be made in the name of "Absolute Prosthetics & Orthotics"', 15, footerY + 10);
+            doc.text('3.  The quotation is valid for 3 months from date of issue', 15, footerY + 15);
+            doc.text('4.  GST will be applicable @ 5% as per the government norms', 15, footerY + 20);
+
+            // Bank details
+            doc.setFontSize(10);
+            doc.text("Best Regards,", 15, footerY + 30);
+            doc.text("Absolute Prosthetics & Orthotics", 15, footerY + 35);
+            doc.setFontSize(8);
+            doc.text("Plot-34, Sarwasukhi Colony, West Marredpally", 15, footerY + 40);
+            doc.text("Secunderabad, Telangana, India", 15, footerY + 43);
+            doc.setFontSize(10);
+            doc.text("Account Number: 142511010000096", 15, footerY + 48);
+            doc.text("BRANCH: WEST MARREDPAILLI", 15, footerY + 53);
+            doc.text("IFSC: UBIN0814253", 15, footerY + 58);
+            doc.text("MICR: 500026101", 15, footerY + 63);
+            doc.text("PHONE: 23468726", 15, footerY + 68);
+
+            // Signature and stamp
+            doc.setFont("helvetica", "bold");
+            doc.text('For Absolute Prosthetics & Orthotics', doc.internal.pageSize.width - 20, footerY + 30, { align: 'right' });
+            try {
+                doc.addImage('/stamp.png', 'PNG', doc.internal.pageSize.width - 50, footerY + 33, 32, 30);
+            } catch (e) {
+                console.error("Error adding stamp:", e);
+            }
+            doc.setFont("helvetica", "normal");
+            doc.text('Authorized Signature', doc.internal.pageSize.width - 20, footerY + 68, { align: 'right' });
         },
-        margin: { left: 15, right: 20 },
+        margin: { left: 15, right: 20, bottom: 100 }, // Add bottom margin to ensure space for footer
         tableLineWidth: 0.1,
         tableLineColor: [0, 0, 0]
     });
@@ -303,16 +342,6 @@ export const generateQuotationPdf = (
     } catch (e) {
       console.error("Error in watermark process:", e);
     }
-
-    // Footer
-    doc.setFontSize(8);
-    doc.text('• Goods Once sold will not be taken back.', 15, pageHeight - 30);
-    doc.text('• Subject to Hyderabad Jurisdiction', 15, pageHeight - 25);
-
-    // Stamp and Signature with proper alignment
-    doc.text('Stamp', pageWidth/2, pageHeight - 30, { align: 'center' }); // Center aligned
-    doc.text('For Absolute Prosthetics', pageWidth - 15, pageHeight - 30, { align: 'right' }); // Right aligned
-    doc.text('Authorized Signature', pageWidth - 15, pageHeight - 20, { align: 'right' }); // Right aligned
 
     // Save PDF
     doc.save(`Quotation_${quotationNumber}_${patient.name || 'Patient'}.pdf`);

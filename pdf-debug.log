@@ -1,0 +1,288 @@
+2025-05-11T11:38:59.275Z: === Starting image load ===
+2025-05-11T11:38:59.275Z: Attempting to load image: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:38:59.276Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:38:59.276Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:38:59.276Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:38:59.277Z: Image file found: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:38:59.277Z: File size: 148038 bytes
+2025-05-11T11:38:59.277Z: Last modified: Fri Apr 25 2025 17:08:53 GMT+0530 (India Standard Time)
+2025-05-11T11:38:59.298Z: Successfully converted image to base64 (length: 197384)
+2025-05-11T11:38:59.299Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiEAAAHKCAYAAADVfJtbAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:38:59.299Z: === End of image load ===
+
+2025-05-11T11:38:59.323Z: === Starting image load ===
+2025-05-11T11:38:59.325Z: Attempting to load image: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:38:59.326Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:38:59.326Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:38:59.327Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:38:59.327Z: Image file found: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:38:59.327Z: File size: 148038 bytes
+2025-05-11T11:38:59.328Z: Last modified: Fri Apr 25 2025 17:08:53 GMT+0530 (India Standard Time)
+2025-05-11T11:38:59.330Z: Successfully converted image to base64 (length: 197384)
+2025-05-11T11:38:59.331Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiEAAAHKCAYAAADVfJtbAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:38:59.331Z: === End of image load ===
+
+2025-05-11T11:38:59.691Z: === Starting image load ===
+2025-05-11T11:38:59.691Z: Attempting to load image: Shopname.png
+2025-05-11T11:38:59.691Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:38:59.692Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:38:59.692Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\Shopname.png
+2025-05-11T11:38:59.693Z: Image file found: Shopname.png
+2025-05-11T11:38:59.693Z: File size: 62988 bytes
+2025-05-11T11:38:59.693Z: Last modified: Fri Apr 25 2025 17:49:38 GMT+0530 (India Standard Time)
+2025-05-11T11:38:59.694Z: Successfully converted image to base64 (length: 83984)
+2025-05-11T11:38:59.694Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAtEAAACwCAYAAADJ/jLRAAAAAXNSR0IArs4c6QAAIABJREFUeF7svQ...
+2025-05-11T11:38:59.695Z: === End of image load ===
+
+2025-05-11T11:38:59.869Z: === Starting image load ===
+2025-05-11T11:38:59.870Z: Attempting to load image: shoptagline.png
+2025-05-11T11:38:59.871Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:38:59.871Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:38:59.872Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\shoptagline.png
+2025-05-11T11:38:59.872Z: Image file found: shoptagline.png
+2025-05-11T11:38:59.873Z: File size: 113590 bytes
+2025-05-11T11:38:59.873Z: Last modified: Fri Apr 25 2025 17:50:15 GMT+0530 (India Standard Time)
+2025-05-11T11:38:59.874Z: Successfully converted image to base64 (length: 151456)
+2025-05-11T11:38:59.875Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABcAAAACUCAYAAAC0lIqkAAAAAXNSR0IArs4c6QAAIABJREFUeF7snQ...
+2025-05-11T11:38:59.875Z: === End of image load ===
+
+2025-05-11T11:38:59.876Z: === Starting image load ===
+2025-05-11T11:38:59.876Z: Attempting to load image: shopslogan.png
+2025-05-11T11:38:59.876Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:38:59.876Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:38:59.879Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\shopslogan.png
+2025-05-11T11:38:59.880Z: Image file found: shopslogan.png
+2025-05-11T11:38:59.881Z: File size: 47939 bytes
+2025-05-11T11:38:59.881Z: Last modified: Fri Apr 25 2025 17:50:41 GMT+0530 (India Standard Time)
+2025-05-11T11:38:59.882Z: Successfully converted image to base64 (length: 63920)
+2025-05-11T11:38:59.884Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAy4AAABACAYAAAD8pSMcAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:38:59.884Z: === End of image load ===
+
+2025-05-11T11:39:01.391Z: === Starting image load ===
+2025-05-11T11:39:01.391Z: Attempting to load image: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:39:01.392Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:39:01.395Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:39:01.396Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:39:01.397Z: Image file found: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:39:01.397Z: File size: 148038 bytes
+2025-05-11T11:39:01.398Z: Last modified: Fri Apr 25 2025 17:08:53 GMT+0530 (India Standard Time)
+2025-05-11T11:39:01.399Z: Successfully converted image to base64 (length: 197384)
+2025-05-11T11:39:01.400Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiEAAAHKCAYAAADVfJtbAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:39:01.400Z: === End of image load ===
+
+2025-05-11T11:42:00.104Z: === Starting image load ===
+2025-05-11T11:42:00.105Z: Attempting to load image: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:42:00.105Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:42:00.105Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:42:00.105Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:42:00.105Z: Image file found: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:42:00.105Z: File size: 148038 bytes
+2025-05-11T11:42:00.105Z: Last modified: Fri Apr 25 2025 17:08:53 GMT+0530 (India Standard Time)
+2025-05-11T11:42:00.106Z: Successfully converted image to base64 (length: 197384)
+2025-05-11T11:42:00.106Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiEAAAHKCAYAAADVfJtbAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:42:00.106Z: === End of image load ===
+
+2025-05-11T11:42:00.118Z: === Starting image load ===
+2025-05-11T11:42:00.118Z: Attempting to load image: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:42:00.118Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:42:00.119Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:42:00.119Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:42:00.119Z: Image file found: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:42:00.119Z: File size: 148038 bytes
+2025-05-11T11:42:00.119Z: Last modified: Fri Apr 25 2025 17:08:53 GMT+0530 (India Standard Time)
+2025-05-11T11:42:00.120Z: Successfully converted image to base64 (length: 197384)
+2025-05-11T11:42:00.120Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiEAAAHKCAYAAADVfJtbAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:42:00.120Z: === End of image load ===
+
+2025-05-11T11:42:00.201Z: === Starting image load ===
+2025-05-11T11:42:00.201Z: Attempting to load image: Shopname.png
+2025-05-11T11:42:00.201Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:42:00.202Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:42:00.202Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\Shopname.png
+2025-05-11T11:42:00.202Z: Image file found: Shopname.png
+2025-05-11T11:42:00.202Z: File size: 62988 bytes
+2025-05-11T11:42:00.202Z: Last modified: Fri Apr 25 2025 17:49:38 GMT+0530 (India Standard Time)
+2025-05-11T11:42:00.203Z: Successfully converted image to base64 (length: 83984)
+2025-05-11T11:42:00.203Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAtEAAACwCAYAAADJ/jLRAAAAAXNSR0IArs4c6QAAIABJREFUeF7svQ...
+2025-05-11T11:42:00.203Z: === End of image load ===
+
+2025-05-11T11:42:00.244Z: === Starting image load ===
+2025-05-11T11:42:00.244Z: Attempting to load image: shoptagline.png
+2025-05-11T11:42:00.245Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:42:00.247Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:42:00.247Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\shoptagline.png
+2025-05-11T11:42:00.247Z: Image file found: shoptagline.png
+2025-05-11T11:42:00.247Z: File size: 113590 bytes
+2025-05-11T11:42:00.247Z: Last modified: Fri Apr 25 2025 17:50:15 GMT+0530 (India Standard Time)
+2025-05-11T11:42:00.247Z: Successfully converted image to base64 (length: 151456)
+2025-05-11T11:42:00.248Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABcAAAACUCAYAAAC0lIqkAAAAAXNSR0IArs4c6QAAIABJREFUeF7snQ...
+2025-05-11T11:42:00.248Z: === End of image load ===
+
+2025-05-11T11:42:00.248Z: === Starting image load ===
+2025-05-11T11:42:00.248Z: Attempting to load image: shopslogan.png
+2025-05-11T11:42:00.248Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:42:00.248Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:42:00.248Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\shopslogan.png
+2025-05-11T11:42:00.249Z: Image file found: shopslogan.png
+2025-05-11T11:42:00.249Z: File size: 47939 bytes
+2025-05-11T11:42:00.249Z: Last modified: Fri Apr 25 2025 17:50:41 GMT+0530 (India Standard Time)
+2025-05-11T11:42:00.249Z: Successfully converted image to base64 (length: 63920)
+2025-05-11T11:42:00.249Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAy4AAABACAYAAAD8pSMcAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:42:00.250Z: === End of image load ===
+
+2025-05-11T11:42:00.294Z: === Starting image load ===
+2025-05-11T11:42:00.294Z: Attempting to load image: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:42:00.294Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:42:00.295Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:42:00.295Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:42:00.295Z: Image file found: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:42:00.295Z: File size: 148038 bytes
+2025-05-11T11:42:00.295Z: Last modified: Fri Apr 25 2025 17:08:53 GMT+0530 (India Standard Time)
+2025-05-11T11:42:00.296Z: Successfully converted image to base64 (length: 197384)
+2025-05-11T11:42:00.296Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiEAAAHKCAYAAADVfJtbAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:42:00.296Z: === End of image load ===
+
+2025-05-11T11:52:43.282Z: === Starting image load ===
+2025-05-11T11:52:43.283Z: Attempting to load image: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:52:43.283Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:52:43.283Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:52:43.283Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:52:43.283Z: Image file found: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:52:43.284Z: File size: 148038 bytes
+2025-05-11T11:52:43.284Z: Last modified: Fri Apr 25 2025 17:08:53 GMT+0530 (India Standard Time)
+2025-05-11T11:52:43.285Z: Successfully converted image to base64 (length: 197384)
+2025-05-11T11:52:43.286Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiEAAAHKCAYAAADVfJtbAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:52:43.286Z: === End of image load ===
+
+2025-05-11T11:52:43.291Z: === Starting image load ===
+2025-05-11T11:52:43.292Z: Attempting to load image: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:52:43.292Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:52:43.292Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:52:43.292Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:52:43.293Z: Image file found: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:52:43.293Z: File size: 148038 bytes
+2025-05-11T11:52:43.293Z: Last modified: Fri Apr 25 2025 17:08:53 GMT+0530 (India Standard Time)
+2025-05-11T11:52:43.293Z: Successfully converted image to base64 (length: 197384)
+2025-05-11T11:52:43.294Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiEAAAHKCAYAAADVfJtbAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:52:43.294Z: === End of image load ===
+
+2025-05-11T11:52:43.401Z: === Starting image load ===
+2025-05-11T11:52:43.401Z: Attempting to load image: Shopname.png
+2025-05-11T11:52:43.401Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:52:43.402Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:52:43.402Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\Shopname.png
+2025-05-11T11:52:43.402Z: Image file found: Shopname.png
+2025-05-11T11:52:43.402Z: File size: 62988 bytes
+2025-05-11T11:52:43.402Z: Last modified: Fri Apr 25 2025 17:49:38 GMT+0530 (India Standard Time)
+2025-05-11T11:52:43.403Z: Successfully converted image to base64 (length: 83984)
+2025-05-11T11:52:43.404Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAtEAAACwCAYAAADJ/jLRAAAAAXNSR0IArs4c6QAAIABJREFUeF7svQ...
+2025-05-11T11:52:43.404Z: === End of image load ===
+
+2025-05-11T11:52:43.433Z: === Starting image load ===
+2025-05-11T11:52:43.434Z: Attempting to load image: shoptagline.png
+2025-05-11T11:52:43.434Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:52:43.434Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:52:43.434Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\shoptagline.png
+2025-05-11T11:52:43.435Z: Image file found: shoptagline.png
+2025-05-11T11:52:43.435Z: File size: 113590 bytes
+2025-05-11T11:52:43.435Z: Last modified: Fri Apr 25 2025 17:50:15 GMT+0530 (India Standard Time)
+2025-05-11T11:52:43.436Z: Successfully converted image to base64 (length: 151456)
+2025-05-11T11:52:43.437Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABcAAAACUCAYAAAC0lIqkAAAAAXNSR0IArs4c6QAAIABJREFUeF7snQ...
+2025-05-11T11:52:43.437Z: === End of image load ===
+
+2025-05-11T11:52:43.437Z: === Starting image load ===
+2025-05-11T11:52:43.438Z: Attempting to load image: shopslogan.png
+2025-05-11T11:52:43.438Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:52:43.438Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:52:43.438Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\shopslogan.png
+2025-05-11T11:52:43.438Z: Image file found: shopslogan.png
+2025-05-11T11:52:43.438Z: File size: 47939 bytes
+2025-05-11T11:52:43.439Z: Last modified: Fri Apr 25 2025 17:50:41 GMT+0530 (India Standard Time)
+2025-05-11T11:52:43.439Z: Successfully converted image to base64 (length: 63920)
+2025-05-11T11:52:43.440Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAy4AAABACAYAAAD8pSMcAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:52:43.440Z: === End of image load ===
+
+2025-05-11T11:52:43.489Z: === Starting image load ===
+2025-05-11T11:52:43.489Z: Attempting to load image: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:52:43.490Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:52:43.490Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:52:43.490Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:52:43.490Z: Image file found: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:52:43.490Z: File size: 148038 bytes
+2025-05-11T11:52:43.490Z: Last modified: Fri Apr 25 2025 17:08:53 GMT+0530 (India Standard Time)
+2025-05-11T11:52:43.490Z: Successfully converted image to base64 (length: 197384)
+2025-05-11T11:52:43.491Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiEAAAHKCAYAAADVfJtbAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:52:43.491Z: === End of image load ===
+
+2025-05-11T11:53:48.602Z: === Starting image load ===
+2025-05-11T11:53:48.602Z: Attempting to load image: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:53:48.602Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:53:48.602Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:53:48.602Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:53:48.603Z: Image file found: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:53:48.603Z: File size: 148038 bytes
+2025-05-11T11:53:48.603Z: Last modified: Fri Apr 25 2025 17:08:53 GMT+0530 (India Standard Time)
+2025-05-11T11:53:48.603Z: Successfully converted image to base64 (length: 197384)
+2025-05-11T11:53:48.604Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiEAAAHKCAYAAADVfJtbAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:53:48.604Z: === End of image load ===
+
+2025-05-11T11:53:48.623Z: === Starting image load ===
+2025-05-11T11:53:48.624Z: Attempting to load image: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:53:48.627Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:53:48.628Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:53:48.628Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:53:48.629Z: Image file found: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:53:48.629Z: File size: 148038 bytes
+2025-05-11T11:53:48.630Z: Last modified: Fri Apr 25 2025 17:08:53 GMT+0530 (India Standard Time)
+2025-05-11T11:53:48.630Z: Successfully converted image to base64 (length: 197384)
+2025-05-11T11:53:48.631Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiEAAAHKCAYAAADVfJtbAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:53:48.631Z: === End of image load ===
+
+2025-05-11T11:53:48.797Z: === Starting image load ===
+2025-05-11T11:53:48.798Z: Attempting to load image: Shopname.png
+2025-05-11T11:53:48.798Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:53:48.798Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:53:48.798Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\Shopname.png
+2025-05-11T11:53:48.799Z: Image file found: Shopname.png
+2025-05-11T11:53:48.799Z: File size: 62988 bytes
+2025-05-11T11:53:48.799Z: Last modified: Fri Apr 25 2025 17:49:38 GMT+0530 (India Standard Time)
+2025-05-11T11:53:48.799Z: Successfully converted image to base64 (length: 83984)
+2025-05-11T11:53:48.799Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAtEAAACwCAYAAADJ/jLRAAAAAXNSR0IArs4c6QAAIABJREFUeF7svQ...
+2025-05-11T11:53:48.799Z: === End of image load ===
+
+2025-05-11T11:53:48.855Z: === Starting image load ===
+2025-05-11T11:53:48.856Z: Attempting to load image: shoptagline.png
+2025-05-11T11:53:48.856Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:53:48.856Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:53:48.856Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\shoptagline.png
+2025-05-11T11:53:48.857Z: Image file found: shoptagline.png
+2025-05-11T11:53:48.857Z: File size: 113590 bytes
+2025-05-11T11:53:48.857Z: Last modified: Fri Apr 25 2025 17:50:15 GMT+0530 (India Standard Time)
+2025-05-11T11:53:48.858Z: Successfully converted image to base64 (length: 151456)
+2025-05-11T11:53:48.860Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABcAAAACUCAYAAAC0lIqkAAAAAXNSR0IArs4c6QAAIABJREFUeF7snQ...
+2025-05-11T11:53:48.861Z: === End of image load ===
+
+2025-05-11T11:53:48.862Z: === Starting image load ===
+2025-05-11T11:53:48.862Z: Attempting to load image: shopslogan.png
+2025-05-11T11:53:48.862Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:53:48.863Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:53:48.863Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\shopslogan.png
+2025-05-11T11:53:48.863Z: Image file found: shopslogan.png
+2025-05-11T11:53:48.863Z: File size: 47939 bytes
+2025-05-11T11:53:48.864Z: Last modified: Fri Apr 25 2025 17:50:41 GMT+0530 (India Standard Time)
+2025-05-11T11:53:48.864Z: Successfully converted image to base64 (length: 63920)
+2025-05-11T11:53:48.864Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAy4AAABACAYAAAD8pSMcAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:53:48.864Z: === End of image load ===
+
+2025-05-11T11:53:48.958Z: === Starting image load ===
+2025-05-11T11:53:48.958Z: Attempting to load image: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:53:48.958Z: Current working directory: D:\Freelance\medical-billing-app
+2025-05-11T11:53:48.959Z: __dirname: D:\Freelance\medical-billing-app\.next\server\app\api\bills\[id]\pdf
+2025-05-11T11:53:48.959Z: Attempting to load image from absolute path: D:\Freelance\medical-billing-app\public\ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:53:48.960Z: Image file found: ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png
+2025-05-11T11:53:48.960Z: File size: 148038 bytes
+2025-05-11T11:53:48.961Z: Last modified: Fri Apr 25 2025 17:08:53 GMT+0530 (India Standard Time)
+2025-05-11T11:53:48.961Z: Successfully converted image to base64 (length: 197384)
+2025-05-11T11:53:48.962Z: Generated data URL (first 100 chars): data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiEAAAHKCAYAAADVfJtbAAAAAXNSR0IArs4c6QAAIABJREFUeF7sfQ...
+2025-05-11T11:53:48.962Z: === End of image load ===
+

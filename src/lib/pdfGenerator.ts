@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // src/lib/pdfGenerator.ts
-import { ToWords } from 'to-words';
 import { jsPDF, GState } from 'jspdf';
 import autoTable from 'jspdf-autotable'; // Import the autoTable plugin
+import { ToWords } from 'to-words';
 import { Patient, BillItem } from '@/types';
 
 // Extend jsPDF interface to include autoTable
@@ -44,7 +44,7 @@ const formatCurrency = (value: number): string => value.toFixed(2);
 //   }
 // };
 
-
+// Client-side PDF generation for direct download
 export const generateBillPdf = (
     patient: Patient,
     items: BillItem[],
@@ -78,15 +78,13 @@ export const generateBillPdf = (
     try {
       doc.addImage('/Shopname.png', 'PNG', 15, currentY - 5, 70, 15);
     } catch (e) {
-      console.error("Error adding shop name image:", e);
+      console.error("Error adding shop name:", e);
     }
     currentY += 15;
 
     // Add Shop Tagline and Slogan on same line
     try {
-      // Add PROSTHETICS & ORTHOTICS
       doc.addImage('/shoptagline.png', 'PNG', 15, currentY - 5, 100, 12);
-      // Add A NEW BEGINNING... (positioned right after the tagline)
       doc.addImage('/shopslogan.png', 'PNG', 115, currentY, 35, 5);
     } catch (e) {
       console.error("Error adding shop tagline and slogan images:", e);
@@ -187,26 +185,6 @@ export const generateBillPdf = (
         ];
     });
 
-    // Calculate tax amounts based on subtotal before discount
-    const baseSubtotal = subtotal - cgstAmount - sgstAmount;
-    const cgstOnSubtotal = baseSubtotal * 0.025; // 2.5% CGST on base subtotal
-    const sgstOnSubtotal = baseSubtotal * 0.025; // 2.5% SGST on base subtotal
-
-    // Add totals rows
-    // const totalsRows = [
-    //     ['', '', '', '', 'Mode of payment', modeOfPayment],
-    //     ['', '', '', '', 'Discount (-)', formatCurrency(discount)],
-    //     ['', '', '', '', 'CGST 2.5 % (+)', formatCurrency(cgstAmount)],
-    //     ['', '', '', '', 'SGST 2.5 % (+)', formatCurrency(sgstAmount)],
-    //     ['', '', '', '', 'Total', formatCurrency(totalAmount)]
-    // ];
-
-    // Combine all rows
-    // const tableBody = [
-    //     ...itemRows,
-    //     ...totalsRows
-    // ];
-
     // Generate table
     const toWords = new ToWords();
     // Always round to 2 decimals for currency
@@ -221,6 +199,7 @@ export const generateBillPdf = (
     if (paise > 0) {
       inWords += ' and ' + toWords.convert(paise) + ' Paise';
     }
+
     autoTable(doc, {
         startY: currentY + 5,
         head: tableHeaders,
@@ -327,24 +306,15 @@ export const generateBillPdf = (
         tableLineColor: [0, 0, 0]
     });
 
-    // Add logo image on top of the table (overlapping)
+    // Add watermark image
     try {
-      // Try to add the image with error handling
-      try {
-        // Save the current graphics state
-        doc.saveGraphicsState();
-        // Set transparency
-        const gState = new GState({ opacity: 0.2 });
-        doc.setGState(gState);
-        // Add the image
-        doc.addImage('/ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png', 'PNG', 65, currentY + 5, 70, 60);
-        // Restore the graphics state
-        doc.restoreGraphicsState();
-      } catch (imgError) {
-        console.error("Failed to add watermark image:", imgError);
-      }
+      doc.saveGraphicsState();
+      const gState = new GState({ opacity: 0.2 });
+      doc.setGState(gState);
+      doc.addImage('/ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png', 'PNG', 65, currentY + 5, 70, 60);
+      doc.restoreGraphicsState();
     } catch (e) {
-      console.error("Error in watermark process:", e);
+      console.error("Error adding watermark:", e);
     }
 
     // Footer
@@ -352,10 +322,24 @@ export const generateBillPdf = (
     doc.text('• Goods Once sold will not be taken back.', 15, pageHeight - 30);
     doc.text('• Subject to Hyderabad Jurisdiction', 15, pageHeight - 25);
 
-    // Stamp and Signature with proper alignment
-    doc.text('Stamp', pageWidth/2, pageHeight - 30, { align: 'center' }); // Center aligned
-    doc.text('For Absolute Prosthetics', pageWidth - 15, pageHeight - 30, { align: 'right' }); // Right aligned
-    doc.text('Authorized Signature', pageWidth - 15, pageHeight - 20, { align: 'right' }); // Right aligned
+    // Stamp and Signature section with proper error handling
+    try {
+        // Add stamp image first
+        doc.addImage('/stamp.png', 'PNG', pageWidth - 50, pageHeight - 52, 32, 30);
+        
+        // Then add text on top
+        doc.setFont("helvetica", "bold");
+        doc.text('For Absolute Prosthetics & Orthotics', pageWidth - 20, pageHeight - 55, { align: 'right' });
+        doc.setFont("helvetica", "normal");
+        doc.text('Authorized Signature', pageWidth - 20, pageHeight - 20, { align: 'right' });
+    } catch (e) {
+        console.error("Error adding stamp or signature:", e);
+        // Fallback to just text if image fails
+        doc.setFont("helvetica", "bold");
+        doc.text('For Absolute Prosthetics & Orthotics', pageWidth - 20, pageHeight - 55, { align: 'right' });
+        doc.setFont("helvetica", "normal");
+        doc.text('Authorized Signature', pageWidth - 20, pageHeight - 20, { align: 'right' });
+    }
 
     // Save PDF
     const billNumber = `INV-${Date.now().toString().slice(-6)}`;
@@ -365,6 +349,289 @@ export const generateBillPdf = (
     throw new Error("Failed to generate PDF bill. Please try again.");
   }
 };
+
+// Server-side PDF generation for API route
+export async function generateBillPdfBuffer(bill: any): Promise<Uint8Array> {
+  const { jsPDF, GState } = await import('jspdf');
+  const autoTable = (await import('jspdf-autotable')).default;
+  const ToWords = (await import('to-words')).ToWords;
+  const toWordsInstance = new ToWords();
+
+  const doc = new jsPDF();
+  const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+  const pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+  let currentY = 15;
+
+  // Test image loading at the start
+  console.log('\n=== Starting PDF Generation ===');
+  console.log('Testing image loading...');
+  try {
+    doc.addImage('/ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png', 'PNG', 0, 0, 0, 0);
+    console.log('Test image loaded successfully');
+  } catch (e) {
+    console.error('Failed to load test image - PDF generation may fail:', e);
+  }
+  console.log('=== End of Test ===\n');
+
+  // --- Header Images ---
+  try {
+    doc.addImage('/ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png', 'PNG', pageWidth - 50, 10, 40, 35);
+  } catch (e) {
+    console.error("Error adding logo:", e);
+  }
+
+  try {
+    doc.addImage('/Shopname.png', 'PNG', 15, currentY - 5, 70, 15);
+  } catch (e) {
+    console.error("Error adding shop name:", e);
+  }
+  currentY += 15;
+
+  try {
+    doc.addImage('/shoptagline.png', 'PNG', 15, currentY - 5, 100, 12);
+    doc.addImage('/shopslogan.png', 'PNG', 115, currentY, 35, 5);
+  } catch (e) {
+    console.error("Error adding tagline and slogan:", e);
+  }
+  currentY += 12;
+
+  // Shop Details
+  const shopAddress = process.env.NEXT_PUBLIC_SHOP_ADDRESS || "Plot-34, Sarwasukhi Colony, West Marredpally, Secunderabad Telangana - 500026.";
+  const shopContact = process.env.NEXT_PUBLIC_SHOP_CONTACT || "9059990616, 7207675777";
+  const shopEmail = process.env.NEXT_PUBLIC_SHOP_EMAIL || "absoluteprostheticsandorthotic@gmail.com";
+  const shopGst = process.env.NEXT_PUBLIC_SHOP_GST || "36ABBCA8257A1ZX";
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.text(shopAddress, 15, currentY);
+  currentY += 5;
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`CELL : ${shopContact}    ${shopEmail}`, 15, currentY);
+  currentY += 5;
+  doc.setFont('helvetica', 'bold');
+  doc.text(`GST NO : ${shopGst}`, 15, currentY);
+  doc.setFont('helvetica', 'normal');
+  currentY += 15;
+
+  // TAX INVOICE heading with borders
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.line(15, currentY - 2, pageWidth - 15, currentY - 2);
+  doc.text('TAX - INVOICE', pageWidth / 2, currentY + 8, { align: 'center' });
+  doc.line(15, currentY + 12, pageWidth - 15, currentY + 12);
+  currentY += 25;
+
+  // S.NO and Date on right side
+  doc.setFontSize(10);
+  const serialNumber = `INV-${bill.serialNo}`;
+  doc.text('S.NO :', pageWidth - 60, currentY);
+  doc.text(serialNumber, pageWidth - 40, currentY);
+  doc.text('Date :', pageWidth - 60, currentY + 15);
+  doc.text(bill.date ? new Date(bill.date).toLocaleDateString('en-GB') : '', pageWidth - 40, currentY + 15);
+
+  // Patient Details
+  doc.setFont('helvetica', 'normal');
+  doc.text('To :', 15, currentY);
+  doc.text(bill.patientName || '', 35, currentY);
+  currentY += 6;
+  doc.text('Address :', 15, currentY);
+  doc.text(bill.patientAddress || '', 35, currentY);
+  currentY += 6;
+  doc.text('Contact :', 15, currentY);
+  doc.text(bill.patientContact || '', 35, currentY);
+  currentY += 6;
+  doc.text('Age :', 15, currentY);
+  doc.text(bill.patientAge ? String(bill.patientAge) : '', 35, currentY);
+  currentY += 6;
+  doc.text('Sex :', 15, currentY);
+  doc.text(bill.patientGender || '', 35, currentY);
+  currentY += 8;
+
+  // Table columns
+  const tableHeaders = [['Date', 'S.NO', 'Product', 'QTY', 'Rate', 'Amount']];
+  const itemRows = (bill.items || []).map((item: any, idx: number) => {
+    const descriptions = item.description?.split('\n')
+      .filter((desc: string) => desc.trim() !== item.type)
+      .map((desc: string) => `${desc.trim()}`)
+      .join('\n') || '';
+    let rate, amount;
+    if (item.isPriceInclGst) {
+      const basePrice = item.rate / 1.05;
+      rate = basePrice.toFixed(2);
+      amount = (basePrice * item.quantity).toFixed(2);
+    } else {
+      rate = (item.rate || 0).toFixed(2);
+      amount = ((item.rate || 0) * item.quantity).toFixed(2);
+    }
+    return [
+      item.date ? new Date(item.date).toLocaleDateString('en-GB') : '',
+      (item.srNo || idx + 1).toString(),
+      `${item.type || ''}${descriptions ? '\n' + descriptions : ''}`,
+      item.quantity?.toString() || '',
+      rate,
+      amount,
+    ];
+  });
+
+  // Summary rows
+  const modeOfPayment = bill.modeOfPayment || 'Cash';
+  const discount = bill.discount || 0;
+  const cgstAmount = bill.cgstAmount || 0;
+  const sgstAmount = bill.sgstAmount || 0;
+  const totalAmount = bill.totalAmount || 0;
+  const roundedTotal = Math.round(totalAmount * 100) / 100;
+  let rupees = Math.floor(roundedTotal);
+  let paise = Math.round((roundedTotal - rupees) * 100);
+  let inWords = toWordsInstance.convert(rupees) + ' Rupees';
+  if (paise > 0) {
+    inWords += ' and ' + toWordsInstance.convert(paise) + ' Paise';
+  }
+
+  // Table with summary rows
+  autoTable(doc, {
+    startY: currentY + 5,
+    head: tableHeaders,
+    body: [
+      ...itemRows,
+      [
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: 'Mode of payment', styles: { fontStyle: 'bold' }},
+        { content: modeOfPayment, styles: { fontStyle: 'bold' }}
+      ],
+      [
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: 'Discount (-)', styles: { fontStyle: 'bold' }},
+        { content: discount.toFixed(2), styles: { fontStyle: 'bold' }}
+      ],
+      [
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: 'CGST 2.5 % (+)', styles: { fontStyle: 'bold' }},
+        { content: cgstAmount.toFixed(2), styles: { fontStyle: 'bold' }}
+      ],
+      [
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: 'SGST 2.5 % (+)', styles: { fontStyle: 'bold' }},
+        { content: sgstAmount.toFixed(2), styles: { fontStyle: 'bold' }}
+      ],
+      [
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: '', styles: { lineWidth: 0 }},
+        { content: 'Total', styles: { fontStyle: 'bold' }},
+        { content: roundedTotal.toFixed(2), styles: { fontStyle: 'bold' }}
+      ],
+      ['Rs. (In Words)', { content: inWords, styles: { fontStyle: 'bold' }, colSpan: 5 }]
+    ],
+    theme: 'grid',
+    styles: {
+      fontSize: 9,
+      lineWidth: 0.1,
+      cellPadding: 2
+    },
+    headStyles: {
+      fillColor: [255, 255, 255],
+      textColor: [0, 0, 0],
+      fontStyle: 'bold',
+      lineWidth: 0.1
+    },
+    columnStyles: {
+      0: { cellWidth: 25 },  // Date
+      1: { cellWidth: 15 },  // S.NO
+      2: { cellWidth: 70 },  // Product
+      3: { cellWidth: 15, halign: 'right' },  // QTY
+      4: { cellWidth: 25, halign: 'right' },  // Rate
+      5: { cellWidth: 25, halign: 'right' }   // Amount
+    },
+    bodyStyles: {
+      lineWidth: 0.1
+    },
+    didDrawCell: function(data: any) {
+      // Draw vertical lines for all columns, but only up to the Total row
+      const totalRowIndex = itemRows.length + 4; // Index of the Total row
+      if (data.row.index >= itemRows.length && data.row.index <= totalRowIndex) {
+        const x = data.cell.x;
+        const y = data.cell.y;
+        const height = data.cell.height;
+        if (data.column.index < 5) {
+          doc.line(
+            x + data.cell.width,
+            y,
+            x + data.cell.width,
+            y + height
+          );
+        }
+      }
+    },
+    didDrawPage: function(data: any) {
+      // Draw bottom border after the table is complete
+      const lastRow = data.table.body[data.table.body.length - 1];
+      if (lastRow) {
+        const y = lastRow.cells[0].y + lastRow.cells[0].height;
+        doc.line(
+          15,
+          y,
+          doc.internal.pageSize.width - 20,
+          y
+        );
+      }
+    },
+    margin: { left: 15, right: 20 },
+    tableLineWidth: 0.1,
+    tableLineColor: [0, 0, 0]
+  });
+
+  // Watermark image
+  try {
+    doc.saveGraphicsState();
+    const gState = new GState({ opacity: 0.2 });
+    doc.setGState(gState);
+    doc.addImage('/ABSOLUTE_PROSTHETICS_AND_ORTHOTICS_logo.png', 'PNG', 65, currentY + 5, 70, 60);
+    doc.restoreGraphicsState();
+  } catch (e) {
+    console.error("Error adding watermark:", e);
+  }
+
+  // Footer
+  doc.setFontSize(8);
+  doc.text('• Goods Once sold will not be taken back.', 15, pageHeight - 30);
+  doc.text('• Subject to Hyderabad Jurisdiction', 15, pageHeight - 25);
+
+  // Stamp and Signature section with proper error handling
+  try {
+      // Add stamp image first
+      doc.addImage('/stamp.png', 'PNG', pageWidth - 50, pageHeight - 52, 32, 30);
+      
+      // Then add text on top
+      doc.setFont("helvetica", "bold");
+      doc.text('For Absolute Prosthetics & Orthotics', pageWidth - 20, pageHeight - 55, { align: 'right' });
+      doc.setFont("helvetica", "normal");
+      doc.text('Authorized Signature', pageWidth - 20, pageHeight - 20, { align: 'right' });
+  } catch (e) {
+      console.error("Error adding stamp or signature:", e);
+      // Fallback to just text if image fails
+      doc.setFont("helvetica", "bold");
+      doc.text('For Absolute Prosthetics & Orthotics', pageWidth - 20, pageHeight - 55, { align: 'right' });
+      doc.setFont("helvetica", "normal");
+      doc.text('Authorized Signature', pageWidth - 20, pageHeight - 20, { align: 'right' });
+  }
+
+  // Return as Uint8Array
+  const arrayBuffer = doc.output('arraybuffer');
+  return new Uint8Array(arrayBuffer);
+}
 
 // Helper function (Example - you might need a robust library for this)
 // function amountToWords(amount: number): string {

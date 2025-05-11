@@ -42,6 +42,7 @@ const PatientInfoForm: React.FC<Props> = ({ patient, onChange }) => {
           value={patient.address}
           onChange={handleChange}
           className="md:col-span-2" // Span across 2 columns on medium screens
+          required
         />
          <div> {/* Wrapper for select */}
            <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
