@@ -343,6 +343,39 @@ export const generateQuotationPdf = (
       console.error("Error in watermark process:", e);
     }
 
+    // Footer
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.text('Terms and Conditions :', 20, pageHeight - 85);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal")
+    doc.text('1.  50% advance payment during the booking and balance amount on fitment', 15, pageHeight - 80);
+    doc.text('2.  The Cheque or NEFT should be made in the name of "Absolute Prosthetics & Orthotics"', 15, pageHeight - 75);
+    doc.text('3.  The quotation is valid for 3 months from date of issue', 15, pageHeight - 70);
+    doc.text('4.  GST will be applicable @ 5% as per the government norms', 15, pageHeight - 65);
+
+    doc.setFontSize(10)
+    doc.text("Best Regards,", 15, pageHeight - 55);
+    doc.text("Absolute Prosthetics & Orthotics", 15, pageHeight - 50);
+    doc.setFontSize(8)
+    doc.text("Plot-34, Sarwasukhi Colony, West Marredpally", 15, pageHeight - 45);
+    doc.text("Secunderabad, Telangana, India", 15, pageHeight - 42);
+    doc.setFontSize(10)
+    doc.text("Account Number: 142511010000096", 15, pageHeight - 35);
+    doc.text("BRANCH: WEST MARREDPAILLI", 15, pageHeight - 30);
+    doc.text("IFSC: UBIN0814253", 15, pageHeight - 25);
+    doc.text("MICR: 500026101", 15, pageHeight - 20);
+    doc.text("PHONE: 23468726", 15, pageHeight - 15);
+    
+    doc.setFontSize(8);
+
+    doc.setFont("helvetica", "bold");
+    doc.text('For Absolute Prosthetics & Orthotics', pageWidth - 20, pageHeight - 55, { align: 'right' }); // Right aligned
+    // Stamp and Signature with proper alignment
+    doc.addImage('/stamp.png', 'PNG', pageWidth - 50, pageHeight - 52, 32, 30);
+    doc.setFont("helvetica", "normal");
+    doc.text('Authorized Signature', pageWidth - 20, pageHeight - 20, { align: 'right' }); // Right aligned
+
     // Save PDF
     doc.save(`Quotation_${quotationNumber}_${patient.name || 'Patient'}.pdf`);
   } catch(error) {

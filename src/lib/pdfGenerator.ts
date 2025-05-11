@@ -322,6 +322,7 @@ export const generateBillPdf = (
     doc.text('• Goods Once sold will not be taken back.', 15, pageHeight - 30);
     doc.text('• Subject to Hyderabad Jurisdiction', 15, pageHeight - 25);
 
+
     // Stamp and Signature section with proper error handling
     try {
         // Add stamp image first
@@ -341,8 +342,9 @@ export const generateBillPdf = (
         doc.text('Authorized Signature', pageWidth - 20, pageHeight - 20, { align: 'right' });
     }
 
+
     // Save PDF
-    const billNumber = `INV-${Date.now().toString().slice(-6)}`;
+    const billNumber = `${serialNumber}`;
     doc.save(`Invoice_${billNumber}_${patient.name || 'Patient'}.pdf`);
   } catch(error) {
     console.error("Error generating PDF:", error);
