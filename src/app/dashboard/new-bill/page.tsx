@@ -14,6 +14,9 @@ import { generateQuotationPdf } from '@/lib/pdfQuotation';
 import { useAuth } from '@/hooks/useAuth'; // Import the auth hook
 import Input from '@/components/ui/ui/Input';
 import Select from '@/components/ui/ui/Select';
+import Image from 'next/image';
+import Header from '@/components/ui/Header';
+import Footer from '@/components/ui/Footer';
 
 const initialPatientState: Patient = { name: '', address: '', contact: '', gender: '', age: '', serialNo: '' };
 const CGST_RATE = 0.025; // 2.5% fixed
@@ -311,77 +314,69 @@ export default function BillingPage() {
   // If not authenticated (checked by useAuth), the hook will redirect.
   // We only render the main content if isAuthenticated is true.
   return isAuthenticated ? (
-     <div className="container mx-auto p-4 md:p-8 max-w-6xl bg-gray-50 min-h-screen">
-          <header className="flex justify-between items-center mb-6 pb-4 border-b border-gray-300">
-            <h1 className="text-3xl font-bold text-gray-800">Absolute Prosthetics & Orthotics Billing</h1>
-             <Button onClick={logout} variant="secondary">Logout</Button>
-          </header>
-
-         {formError && (
-             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <strong className="font-bold">Error!</strong>
-                <span className="block sm:inline"> {formError}</span>
-             </div>
-         )}
-
-         {discount > itemsTotal && (
-           <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
-             <strong className="font-bold">Warning!</strong>
-             <span className="block sm:inline"> Discount cannot exceed the total bill amount. The maximum discount applied will be {itemsTotal}.</span>
-           </div>
-         )}
-
-         <PatientInfoForm patient={patient} onChange={handlePatientChange} />
-         
-         {/* Add Mode of Payment and Discount inputs */}
-         <div className="bg-white p-6 rounded-lg shadow mb-6 border border-gray-200">
-           <h2 className="text-xl font-semibold mb-4 text-gray-800">Payment Details</h2>
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <Select
-               label="Mode of Payment"
-               id="modeOfPayment"
-               name="modeOfPayment"
-               value={modeOfPayment}
-               onChange={(e) => setModeOfPayment(e.target.value)}
-               options={[
-                 { value: 'Cash', label: 'Cash' },
-                 { value: 'Card', label: 'Card' },
-                 { value: 'UPI', label: 'UPI' },
-                 { value: 'Net Banking', label: 'Net Banking' }
-               ]}
-             />
-             <Input
-               label="Discount Amount"
-               id="discount"
-               name="discount"
-               type="number"
-               value={discount.toString()}
-               onChange={handleDiscountChange}
-               min="0"
-             />
-           </div>
-         </div>
-
-         <ProductInputForm onAddProduct={handleAddProduct} />
-         <BillTable items={billItems} onRemoveItem={handleRemoveItem} />
-         <BillSummary
-            itemsTotal={itemsTotal}
-            cgstAmount={cgstAmount}
-            sgstAmount={sgstAmount}
-            totalAmount={totalAmount}
-            cgstRate={CGST_RATE}
-            sgstRate={SGST_RATE}
-            discount={discount}
-         />
-
-         <div className="mt-8 flex justify-end space-x-4">
-             <Button onClick={handleGenerateQuotation} disabled={billItems.length === 0}>
-                Generate Quotation
-             </Button>
-             <Button onClick={handleGenerateBill} disabled={billItems.length === 0}>
-                Generate & Download Bill (PDF)
-             </Button>
+    <div className="container mx-auto p-4 md:p-8 max-w-6xl bg-gray-50 min-h-screen">
+      <Header title="Absolute Prosthetics & Orthotics Billing" onLogout={logout} />
+      {formError && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <strong className="font-bold">Error!</strong>
+          <span className="block sm:inline"> {formError}</span>
         </div>
+      )}
+      {discount > itemsTotal && (
+        <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <strong className="font-bold">Warning!</strong>
+          <span className="block sm:inline"> Discount cannot exceed the total bill amount. The maximum discount applied will be {itemsTotal}.</span>
+        </div>
+      )}
+      <PatientInfoForm patient={patient} onChange={handlePatientChange} />
+      {/* Add Mode of Payment and Discount inputs */}
+      <div className="bg-white p-6 rounded-lg shadow mb-6 border border-gray-200">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Payment Details</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Select
+            label="Mode of Payment"
+            id="modeOfPayment"
+            name="modeOfPayment"
+            value={modeOfPayment}
+            onChange={(e) => setModeOfPayment(e.target.value)}
+            options={[
+              { value: 'Cash', label: 'Cash' },
+              { value: 'Card', label: 'Card' },
+              { value: 'UPI', label: 'UPI' },
+              { value: 'Net Banking', label: 'Net Banking' }
+            ]}
+          />
+          <Input
+            label="Discount Amount"
+            id="discount"
+            name="discount"
+            type="number"
+            value={discount.toString()}
+            onChange={handleDiscountChange}
+            min="0"
+          />
+        </div>
+      </div>
+      <ProductInputForm onAddProduct={handleAddProduct} />
+      <BillTable items={billItems} onRemoveItem={handleRemoveItem} />
+      <BillSummary
+        itemsTotal={itemsTotal}
+        cgstAmount={cgstAmount}
+        sgstAmount={sgstAmount}
+        totalAmount={totalAmount}
+        cgstRate={CGST_RATE}
+        sgstRate={SGST_RATE}
+        discount={discount}
+      />
+      <div className="mt-8 flex justify-end space-x-4">
+        <Button onClick={handleGenerateQuotation} disabled={billItems.length === 0}>
+          Generate Quotation
+        </Button>
+        <Button onClick={handleGenerateBill} disabled={billItems.length === 0}>
+          Generate & Download Bill (PDF)
+        </Button>
+      </div>
+      <Footer />
     </div>
   ) : null; // Render nothing if not authenticated (redirect handled by hook) 
 } 

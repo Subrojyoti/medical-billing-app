@@ -122,7 +122,7 @@ export const generateBillPdf = (
 
     // S.NO and Date on right side
     doc.setFontSize(10);
-    const serialNumber = `INV-${patient.serialNo}`;
+    const serialNumber = `APO-${patient.serialNo}`;
     doc.text('S.NO :', pageWidth - 60, currentY);
     doc.text(serialNumber, pageWidth - 40, currentY);
     doc.text('Date :', pageWidth - 60, currentY + 15);
@@ -425,7 +425,7 @@ export async function generateBillPdfBuffer(bill: any): Promise<Uint8Array> {
 
   // S.NO and Date on right side
   doc.setFontSize(10);
-  const serialNumber = `INV-${bill.serialNo}`;
+  const serialNumber = `APO-${bill.serialNo}`;
   doc.text('S.NO :', pageWidth - 60, currentY);
   doc.text(serialNumber, pageWidth - 40, currentY);
   doc.text('Date :', pageWidth - 60, currentY + 15);
