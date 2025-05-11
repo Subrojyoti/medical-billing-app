@@ -42,7 +42,7 @@ export async function generateBillPdfBuffer(bill: any): Promise<Uint8Array> {
   try {
     const shopNameBase64 = getImageBase64('Shopname.png');
     if (shopNameBase64) {
-      doc.addImage(shopNameBase64, 'PNG', 15, currentY - 5, 70, 15);
+      doc.addImage(shopNameBase64, 'PNG', 12, currentY - 5, 70, 15);
     }
   } catch (e) {}
   currentY += 15;
@@ -51,7 +51,7 @@ export async function generateBillPdfBuffer(bill: any): Promise<Uint8Array> {
     const taglineBase64 = getImageBase64('shoptagline.png');
     const sloganBase64 = getImageBase64('shopslogan.png');
     if (taglineBase64) {
-      doc.addImage(taglineBase64, 'PNG', 15, currentY - 5, 100, 12);
+      doc.addImage(taglineBase64, 'PNG', 13, currentY - 5, 100, 12);
     }
     if (sloganBase64) {
       doc.addImage(sloganBase64, 'PNG', 115, currentY, 35, 5);
@@ -89,9 +89,9 @@ export async function generateBillPdfBuffer(bill: any): Promise<Uint8Array> {
   doc.setFontSize(10);
   const serialNumber = `APO-${bill.serialNo}`;
   doc.text('S.NO :', pageWidth - 60, currentY);
-  doc.text(serialNumber, pageWidth - 40, currentY);
+  doc.text(serialNumber, pageWidth - 45, currentY);
   doc.text('Date :', pageWidth - 60, currentY + 15);
-  doc.text(bill.date ? new Date(bill.date).toLocaleDateString('en-GB') : '', pageWidth - 40, currentY + 15);
+  doc.text(bill.date ? new Date(bill.date).toLocaleDateString('en-GB') : '', pageWidth - 45, currentY + 15);
 
   // Patient Details
   doc.setFont('helvetica', 'normal');

@@ -383,14 +383,14 @@ export async function generateBillPdfBuffer(bill: any): Promise<Uint8Array> {
   }
 
   try {
-    doc.addImage('/Shopname.png', 'PNG', 15, currentY - 5, 70, 15);
+    doc.addImage('/Shopname.png', 'PNG', 12, currentY - 5, 70, 15);
   } catch (e) {
     console.error("Error adding shop name:", e);
   }
   currentY += 15;
 
   try {
-    doc.addImage('/shoptagline.png', 'PNG', 15, currentY - 5, 100, 12);
+    doc.addImage('/shoptagline.png', 'PNG', 13, currentY - 5, 100, 12);
     doc.addImage('/shopslogan.png', 'PNG', 115, currentY, 35, 5);
   } catch (e) {
     console.error("Error adding tagline and slogan:", e);
@@ -427,9 +427,9 @@ export async function generateBillPdfBuffer(bill: any): Promise<Uint8Array> {
   doc.setFontSize(10);
   const serialNumber = `APO-${bill.serialNo}`;
   doc.text('S.NO :', pageWidth - 60, currentY);
-  doc.text(serialNumber, pageWidth - 40, currentY);
+  doc.text(serialNumber, pageWidth - 45, currentY);
   doc.text('Date :', pageWidth - 60, currentY + 15);
-  doc.text(bill.date ? new Date(bill.date).toLocaleDateString('en-GB') : '', pageWidth - 40, currentY + 15);
+  doc.text(bill.date ? new Date(bill.date).toLocaleDateString('en-GB') : '', pageWidth - 45, currentY + 15);
 
   // Patient Details
   doc.setFont('helvetica', 'normal');
