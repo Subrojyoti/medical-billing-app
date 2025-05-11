@@ -2,7 +2,7 @@
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
 }
 
 const Button: React.FC<ButtonProps> = ({ children, className, variant = 'primary', ...props }) => {
@@ -19,6 +19,9 @@ const Button: React.FC<ButtonProps> = ({ children, className, variant = 'primary
     case 'danger':
        variantStyle = "text-white bg-red-600 hover:bg-red-700 focus:ring-red-500";
        break;
+    case 'ghost':
+      variantStyle = "text-gray-700 hover:bg-gray-100 focus:ring-gray-500 border-gray-300";
+      break;
   }
 
   return (
