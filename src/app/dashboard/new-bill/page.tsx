@@ -2,7 +2,7 @@
 // src/app/dashboard/new-bill/page.tsx
 'use client'; // Required for hooks and event handlers
 
-import { useState, useMemo} from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { Patient, Product, BillItem } from '@/types';
 import PatientInfoForm from '@/components/ui/PatientInfoForm';
 import ProductInputForm from '@/components/ui/ProductInputForm';
@@ -29,9 +29,91 @@ export default function BillingPage() {
   const [modeOfPayment, setModeOfPayment] = useState<string>('Cash');
   const [discount, setDiscount] = useState<number>(0);
 
+  // Add useEffect to fetch next serial number
+  useEffect(() => {
+    const fetchNextSerialNo = async () => {
+      try {
+        const response = await fetch('/api/bills/next-serial');
+        if (!response.ok) {
+          throw new Error('Failed to fetch next serial number');
+        }
+        const data = await response.json();
+        setPatient(prev => ({ ...prev, serialNo: data.serialNo }));
+      } catch (error) {
+        console.error('Error fetching next serial number:', error);
+        setFormError('Failed to fetch next serial number. Please try again.');
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchNextSerialNo();
+    }
+  }, [isAuthenticated]);
+
+  // Add debounce function
+  const debounce = (func: Function, wait: number) => {
+    let timeout: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  };
+
+  // Add handler for serial number input
+  const handleSerialNoChange = useCallback(
+    debounce(async (value: string) => {
+      if (!value) return;
+
+      try {
+        const response = await fetch(`/api/bills/by-serial/${encodeURIComponent(value)}`);
+        if (!response.ok) {
+          if (response.status === 404) {
+            // Bill not found, this is a new serial number
+            return;
+          }
+          throw new Error('Failed to fetch bill details');
+        }
+
+        const data = await response.json();
+        
+        // Update patient details
+        setPatient(data.patient);
+        
+        // Update bill items
+        const formattedItems = data.items.map((item: any, index: number) => ({
+          srNo: index + 1,
+          type: 'Product', // Default type
+          description: item.description,
+          quantity: item.quantity,
+          price: item.rate,
+          amount: item.amount,
+          date: new Date().toLocaleDateString('en-GB'),
+          isPriceInclGst: false // Default value
+        }));
+        
+        setBillItems(formattedItems);
+        setNextSrNo(formattedItems.length + 1);
+        
+        // Update discount
+        setDiscount(data.discount || 0);
+
+      } catch (error) {
+        console.error('Error fetching bill details:', error);
+        setFormError('Failed to fetch bill details. Please try again.');
+      }
+    }, 500), // 500ms debounce delay
+    []
+  );
+
+  // Modify handlePatientChange to include special handling for serial number
   const handlePatientChange = (field: keyof Patient, value: string) => {
     setPatient(prev => ({ ...prev, [field]: value }));
     setFormError(''); // Clear global error on change
+
+    // If serial number is being changed, trigger the fetch
+    if (field === 'serialNo') {
+      handleSerialNoChange(value);
+    }
   };
 
   const handleAddProduct = (product: Product) => {
