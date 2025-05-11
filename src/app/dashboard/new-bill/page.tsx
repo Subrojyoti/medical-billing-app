@@ -120,10 +120,6 @@ export default function BillingPage() {
 
     setFormError(''); // Clear error if validation passes
 
-    // Debug log for patient and billItems
-    console.log('Submitting bill with patient:', patient);
-    console.log('Bill items:', billItems);
-
     try {
       // Save bill to database
       const response = await fetch('/api/bills', {
@@ -176,7 +172,6 @@ export default function BillingPage() {
 
     } catch (error) {
       setFormError('Failed to save bill. Please try again.');
-      console.error('Error saving bill:', error);
     }
   };
 

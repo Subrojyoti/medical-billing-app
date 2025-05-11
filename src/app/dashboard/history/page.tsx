@@ -163,16 +163,6 @@ export default function HistoryPage() {
                       className="inline-block px-4 py-2 bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 transition text-sm"
                       onClick={(e) => {
                         e.preventDefault();
-                        console.log('View Details clicked for bill:', {
-                          id: bill._id,
-                          serialNo: bill.serialNo,
-                          patientName: bill.patientName,
-                          patientContact: bill.patientContact,
-                          patientAge: bill.patientAge,
-                          patientGender: bill.patientGender,
-                          date: bill.date,
-                          totalAmount: bill.totalAmount
-                        });
                         window.open(`/api/bills/${bill._id}/pdf`, '_blank');
                       }}
                     >
