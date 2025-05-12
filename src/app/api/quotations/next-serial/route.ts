@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import Quotation from '@/model/Quotation';
-import Counter from '@/model/Counter';
 
 export async function GET() {
   try {
@@ -13,14 +12,19 @@ export async function GET() {
     const currentYear = String(now.getFullYear()).slice(-2); // Last 2 digits of year
     const prefix = `QT-${currentMonth}/${currentYear}-`;
 
-    // Atomically increment the counter for this month/year
-    const counterDoc = await Counter.findOneAndUpdate(
-      { key: prefix },
-      { $inc: { seq: 1 } },
-      { new: true, upsert: true }
-    );
+    // Find the latest quotation with the current month/year prefix
+    const latestQuotation = await Quotation.findOne({
+      serialNo: { $regex: `^${prefix}` }
+    }).sort({ serialNo: -1 });
 
-    const nextSerialNo = `${prefix}${String(counterDoc.seq).padStart(5, '0')}`;
+    let nextNumber = 1;
+    if (latestQuotation) {
+      // Extract the number part from the latest serial number
+      const lastNumber = parseInt(latestQuotation.serialNo.split('-')[2]);
+      nextNumber = lastNumber + 1;
+    }
+
+    const nextSerialNo = `${prefix}${String(nextNumber).padStart(5, '0')}`;
 
     return NextResponse.json({ serialNo: nextSerialNo });
   } catch (error) {
