@@ -30,10 +30,38 @@ interface Bill {
   createdAt: string;
 }
 
+interface Quotation {
+  _id: string;
+  serialNo: string;
+  date: string;
+  patientName: string;
+  patientAddress: string;
+  patientContact: string;
+  patientAge: string;
+  patientGender: string;
+  items: Array<{
+    description: string;
+    quantity: number;
+    price: number;
+    amount: number;
+    type: string;
+    isPriceInclGst: boolean;
+  }>;
+  totalAmount: number;
+  discount: number;
+  cgstAmount: number;
+  sgstAmount: number;
+  createdAt: string;
+}
+
+type HistoryType = 'bill' | 'quotation';
+
 export default function HistoryPage() {
   const router = useRouter();
   const { logout } = useAuth();
+  const [historyType, setHistoryType] = useState<HistoryType>('bill');
   const [bills, setBills] = useState<Bill[]>([]);
+  const [quotations, setQuotations] = useState<Quotation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -41,17 +69,23 @@ export default function HistoryPage() {
   const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
-    fetchBills();
-  }, []);
+    fetchData();
+  }, [historyType]);
 
-  const fetchBills = async () => {
+  const fetchData = async () => {
+    setLoading(true);
     try {
-      const response = await fetch('/api/bills');
+      const endpoint = historyType === 'bill' ? '/api/bills' : '/api/quotations';
+      const response = await fetch(endpoint);
       if (!response.ok) {
-        throw new Error('Failed to fetch bills');
+        throw new Error(`Failed to fetch ${historyType}s`);
       }
       const data = await response.json();
-      setBills(data);
+      if (historyType === 'bill') {
+        setBills(data);
+      } else {
+        setQuotations(data);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -59,30 +93,32 @@ export default function HistoryPage() {
     }
   };
 
-  const filteredBills = bills.filter(bill => {
+  const filteredData = (historyType === 'bill' ? bills : quotations).filter(item => {
     const matchesSearch = 
-      bill.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      bill.serialNo.includes(searchTerm);
+      item.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.serialNo.includes(searchTerm);
     
-    const billDate = new Date(bill.date);
+    const itemDate = new Date(item.date);
     const matchesDateRange = 
-      (!startDate || billDate >= new Date(startDate)) &&
-      (!endDate || billDate <= new Date(endDate));
+      (!startDate || itemDate >= new Date(startDate)) &&
+      (!endDate || itemDate <= new Date(endDate));
 
     return matchesSearch && matchesDateRange;
   });
 
-  const handleViewBill = (billId: string) => {
-    router.push(`/dashboard/history/${billId}`);
+  const handleViewDetails = (itemId: string) => {
+    const endpoint = historyType === 'bill' ? 'bills' : 'quotations';
+    router.push(`/dashboard/history/${endpoint}/${itemId}`);
   };
 
-  const handleDeleteBill = async (billId: string) => {
-    if (!confirm('Are you sure you want to delete this bill?')) return;
-    const res = await fetch(`/api/bills/${billId}`, { method: 'DELETE' });
+  const handleDelete = async (itemId: string) => {
+    if (!confirm(`Are you sure you want to delete this ${historyType}?`)) return;
+    const endpoint = historyType === 'bill' ? 'bills' : 'quotations';
+    const res = await fetch(`/api/${endpoint}/${itemId}`, { method: 'DELETE' });
     if (res.ok) {
-      await fetchBills();
+      await fetchData();
     } else {
-      alert('Failed to delete bill.');
+      alert(`Failed to delete ${historyType}.`);
     }
   };
 
@@ -104,11 +140,36 @@ export default function HistoryPage() {
           </div>
         )}
         <div className="bg-white p-6 rounded-lg shadow mb-6">
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex bg-gray-100 rounded-full p-1">
+              <button
+                onClick={() => setHistoryType('bill')}
+                className={`px-6 py-2 rounded-full transition font-semibold ${
+                  historyType === 'bill'
+                    ? 'bg-indigo-600 text-white shadow'
+                    : 'text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Bills
+              </button>
+              <button
+                onClick={() => setHistoryType('quotation')}
+                className={`px-6 py-2 rounded-full transition font-semibold ${
+                  historyType === 'quotation'
+                    ? 'bg-indigo-600 text-white shadow'
+                    : 'text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Quotations
+              </button>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <Input
               id="search"
               label="Search"
-              placeholder="Search by name or serial number"
+              placeholder={`Search by name or ${historyType === 'bill' ? 'bill' : 'quotation'} number`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -127,47 +188,50 @@ export default function HistoryPage() {
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
-          <div className="overflow-x-auto">
+          
+          {filteredData.length > 0 ? (
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Serial No.</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {historyType === 'bill' ? 'Bill No.' : 'Quotation No.'}
+                  </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Patient Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredBills.map((bill) => (
-                  <tr key={bill._id} className="hover:bg-gray-50">
+                {filteredData.map((item) => (
+                  <tr key={item._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {format(new Date(bill.date), 'dd/MM/yyyy')}
+                      {format(new Date(item.date), 'dd/MM/yyyy')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {bill.serialNo}
+                      {item.serialNo}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {bill.patientName}
+                      {item.patientName}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ₹{bill.totalAmount.toFixed(2)}
+                      ₹{item.totalAmount.toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <a
-                        href={`/api/bills/${bill._id}/pdf`}
+                        href={`/api/${historyType}s/${item._id}/pdf`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-block px-4 py-2 bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 transition text-sm"
                         onClick={(e) => {
                           e.preventDefault();
-                          window.open(`/api/bills/${bill._id}/pdf`, '_blank');
+                          window.open(`/api/${historyType}s/${item._id}/pdf`, '_blank');
                         }}
                       >
                         View Details
                       </a>
                       <button
-                        onClick={() => handleDeleteBill(bill._id)}
+                        onClick={() => handleDelete(item._id)}
                         className="ml-2 px-4 py-2 bg-red-100 text-red-700 rounded hover:bg-red-200 transition text-sm"
                       >
                         Delete
@@ -177,10 +241,9 @@ export default function HistoryPage() {
                 ))}
               </tbody>
             </table>
-          </div>
-          {filteredBills.length === 0 && (
+          ) : (
             <div className="text-center py-8 text-gray-500">
-              No bills found matching your search criteria
+              No {historyType}s found matching your search criteria
             </div>
           )}
         </div>

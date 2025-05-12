@@ -96,7 +96,7 @@ export const generateQuotationPdf = (
 
     // Quotation Number and Date on right side
     doc.setFontSize(10);
-    const quotationNumber = `QT-${patient.serialNo}`;
+    const quotationNumber = `${patient.serialNo}`;
     doc.text('S.No :', pageWidth - 60, currentY);
     doc.text(quotationNumber, pageWidth - 45, currentY);
     doc.text('Date :', pageWidth - 60, currentY + 15);

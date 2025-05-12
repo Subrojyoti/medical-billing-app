@@ -67,42 +67,84 @@ export default function BillingPage() {
     debounce(async (value: string) => {
       if (!value) return;
 
-      try {
-        const response = await fetch(`/api/bills/by-serial/${encodeURIComponent(value)}`);
-        if (!response.ok) {
-          if (response.status === 404) {
-            // Bill not found, this is a new serial number
-            return;
+      // Check if it's a quotation serial number (starts with QT-)
+      if (value.startsWith('QT-')) {
+        try {
+          const response = await fetch(`/api/quotations/by-serial/${encodeURIComponent(value)}`);
+          if (!response.ok) {
+            if (response.status === 404) {
+              // Quotation not found
+              return;
+            }
+            throw new Error('Failed to fetch quotation details');
           }
-          throw new Error('Failed to fetch bill details');
+
+          const data = await response.json();
+          
+          // Update patient details
+          setPatient(data.patient);
+          
+          // Update bill items
+          const formattedItems = data.items.map((item: any, index: number) => ({
+            srNo: index + 1,
+            type: item.type || 'Product',
+            description: item.description,
+            quantity: item.quantity,
+            price: item.price,
+            amount: item.price * item.quantity,
+            date: item.date ? new Date(item.date).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB'),
+            isPriceInclGst: item.isPriceInclGst || false
+          }));
+          
+          setBillItems(formattedItems);
+          setNextSrNo(formattedItems.length + 1);
+          
+          // Update discount
+          setDiscount(data.discount || 0);
+
+        } catch (error) {
+          console.error('Error fetching quotation details:', error);
+          setFormError('Failed to fetch quotation details. Please try again.');
         }
+      } else {
+        // Handle bill serial number (existing code)
+        try {
+          const response = await fetch(`/api/bills/by-serial/${encodeURIComponent(value)}`);
+          if (!response.ok) {
+            if (response.status === 404) {
+              // Bill not found, this is a new serial number
+              return;
+            }
+            throw new Error('Failed to fetch bill details');
+          }
 
-        const data = await response.json();
-        
-        // Update patient details
-        setPatient(data.patient);
-        
-        // Update bill items
-        const formattedItems = data.items.map((item: any, index: number) => ({
-          srNo: index + 1,
-          type: 'Product', // Default type
-          description: item.description,
-          quantity: item.quantity,
-          price: item.rate,
-          amount: item.amount,
-          date: new Date().toLocaleDateString('en-GB'),
-          isPriceInclGst: false // Default value
-        }));
-        
-        setBillItems(formattedItems);
-        setNextSrNo(formattedItems.length + 1);
-        
-        // Update discount
-        setDiscount(data.discount || 0);
+          const data = await response.json();
+          
+          // Update patient details
+          setPatient(data.patient);
+          
+          // Update bill items
+          const formattedItems = data.items.map((item: any, index: number) => ({
+            srNo: index + 1,
+            type: 'Product', // Default type
+            description: item.description,
+            quantity: item.quantity,
+            price: item.rate,
+            amount: item.amount,
+            date: new Date().toLocaleDateString('en-GB'),
+            isPriceInclGst: false // Default value
+          }));
+          
+          setBillItems(formattedItems);
+          setNextSrNo(formattedItems.length + 1);
+          
+          // Update discount
+          setDiscount(data.discount || 0);
 
-      } catch (error) {
-        console.error('Error fetching bill details:', error);
-        setFormError('Failed to fetch bill details. Please try again.');
+        } catch (error) {
+          console.error('Error fetching bill details:', error);
+          setFormError('Failed to fetch bill details. Please try again.');
+        }
       }
     }, 500), // 500ms debounce delay
     []
@@ -260,9 +302,9 @@ export default function BillingPage() {
     }
   };
 
-  const handleGenerateQuotation = () => {
+  const handleGenerateQuotation = async () => {
     // Validation before generating PDF
-    if (!patient.name || !patient.contact || !patient.address || !patient.gender || !patient.age || !patient.serialNo) {
+    if (!patient.name || !patient.contact || !patient.address || !patient.gender || !patient.age) {
       setFormError('Please fill in all patient details.');
       window.scrollTo(0, 0); // Scroll to top to show error
       return;
@@ -271,17 +313,83 @@ export default function BillingPage() {
       setFormError('Please add at least one product to the quotation.');
       return;
     }
+    // New: Validate that every item has a type
+    if (billItems.some(item => !item.type)) {
+      setFormError('Every item must have a type. Please check your products.');
+      window.scrollTo(0, 0);
+      return;
+    }
 
     setFormError(''); // Clear error if validation passes
-    generateQuotationPdf(
-      patient,
-      billItems,
-      itemsTotal,
-      cgstAmount,
-      sgstAmount,
-      discount,
-      totalAmount
-    );
+
+    try {
+      // Fetch quotation serial number
+      const serialResponse = await fetch('/api/quotations/next-serial');
+      if (!serialResponse.ok) {
+        throw new Error('Failed to fetch quotation serial number');
+      }
+      const serialData = await serialResponse.json();
+      const quotationSerialNo = serialData.serialNo;
+
+      // Map billItems to ensure all required fields for quotation
+      const quotationItems = billItems.map((item, idx) => ({
+        type: item.type || 'Product',
+        description: item.description,
+        quantity: item.quantity,
+        price: item.price,
+        isPriceInclGst: item.isPriceInclGst || false,
+        date: item.date ? new Date(item.date) : new Date(),
+        srNo: item.srNo || idx + 1
+      }));
+
+      // Log the payload for debugging
+      const quotationPayload = {
+        patient: {
+          name: patient.name,
+          address: patient.address,
+          contact: patient.contact,
+          gender: patient.gender,
+          age: patient.age,
+          serialNo: quotationSerialNo, // Use the quotation serial number
+        },
+        items: quotationItems,
+        totalAmount,
+        discount,
+        cgstAmount,
+        sgstAmount,
+      };
+      console.log('Quotation payload:', quotationPayload);
+
+      // Save quotation to database
+      const response = await fetch('/api/quotations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(quotationPayload),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Failed to save quotation:', errorText);
+        throw new Error('Failed to save quotation');
+      }
+
+      // Generate PDF after successful save
+      generateQuotationPdf(
+        { ...patient, serialNo: quotationSerialNo }, // Use the quotation serial number
+        billItems,
+        itemsTotal,
+        cgstAmount,
+        sgstAmount,
+        discount,
+        totalAmount
+      );
+
+    } catch (error) {
+      console.error('Error saving quotation:', error);
+      setFormError('Failed to save quotation. Please try again.');
+    }
   };
 
   const handleRemoveItem = (srNo: number) => {

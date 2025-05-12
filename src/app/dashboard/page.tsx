@@ -22,10 +22,10 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Button
                 onClick={() => router.push('/dashboard/history')}
-                className="flex flex-col items-center justify-center gap-2 p-6 text-lg font-semibold rounded-lg shadow-sm bg-white border border-indigo-200 hover:bg-indigo-50 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition"
+                className="group flex flex-col items-center justify-center gap-2 p-6 text-lg font-semibold rounded-lg shadow-sm bg-white border border-indigo-200 hover:bg-indigo-600 hover:text-white focus:ring-2 focus:ring-indigo-400 focus:outline-none transition"
               >
-                <span className="text-indigo-700"><ClipboardIcon className="w-7 h-7 mb-1" /></span>
-                <span className="text-indigo-700">View History</span>
+                <span className="text-indigo-700 group-hover:text-white"><ClipboardIcon className="w-7 h-7 mb-1" /></span>
+                <span className="text-indigo-700 group-hover:text-white">View History</span>
               </Button>
               <Button
                 onClick={() => router.push('/dashboard/new-bill')}
