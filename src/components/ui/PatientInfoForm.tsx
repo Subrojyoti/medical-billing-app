@@ -14,6 +14,32 @@ const PatientInfoForm: React.FC<Props> = ({ patient, onChange }) => {
     onChange(name as keyof Patient, value);
   };
 
+  // Determine if serialNo should be disabled
+  const serialNoDisabled = !!(patient.name || patient.address || patient.contact || patient.gender || patient.age);
+
+  // Handler for serialNo input
+  const handleSerialNoInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    onChange('serialNo', value);
+    if (value.startsWith('QT-')) {
+      try {
+        const response = await fetch(`/api/quotations/by-serial/${encodeURIComponent(value)}`);
+        if (response.ok) {
+          const data = await response.json();
+          // Auto-fill patient details
+          onChange('name', data.patient.name);
+          onChange('address', data.patient.address);
+          onChange('contact', data.patient.contact);
+          onChange('gender', data.patient.gender);
+          onChange('age', data.patient.age);
+          // Optionally, trigger a callback to fill items in the parent component
+        }
+      } catch (error) {
+        // Ignore error, just don't auto-fill
+      }
+    }
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow mb-6 border border-gray-200">
       <h2 className="text-xl font-semibold mb-4 text-gray-800">Patient Information</h2>
@@ -75,8 +101,8 @@ const PatientInfoForm: React.FC<Props> = ({ patient, onChange }) => {
           id="serialNo"
           name="serialNo"
           value={patient.serialNo}
-          onChange={handleChange}
-          required
+          onChange={handleSerialNoInput}
+          disabled={serialNoDisabled}
         />
       </div>
     </div>

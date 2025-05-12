@@ -32,27 +32,6 @@ export default function BillingPage() {
   const [modeOfPayment, setModeOfPayment] = useState<string>('Cash');
   const [discount, setDiscount] = useState<number>(0);
 
-  // Add useEffect to fetch next serial number
-  useEffect(() => {
-    const fetchNextSerialNo = async () => {
-      try {
-        const response = await fetch('/api/bills/next-serial');
-        if (!response.ok) {
-          throw new Error('Failed to fetch next serial number');
-        }
-        const data = await response.json();
-        setPatient(prev => ({ ...prev, serialNo: data.serialNo }));
-      } catch (error) {
-        console.error('Error fetching next serial number:', error);
-        setFormError('Failed to fetch next serial number. Please try again.');
-      }
-    };
-
-    if (isAuthenticated) {
-      fetchNextSerialNo();
-    }
-  }, [isAuthenticated]);
-
   // Add debounce function
   const debounce = (func: Function, wait: number) => {
     let timeout: NodeJS.Timeout;
@@ -235,7 +214,7 @@ export default function BillingPage() {
 
   const handleGenerateBill = async () => {
     // Validation before generating PDF
-    if (!patient.name || !patient.contact || !patient.address || !patient.gender || !patient.age || !patient.serialNo) {
+    if (!patient.name || !patient.contact || !patient.address || !patient.gender || !patient.age) {
       setFormError('Please fill in all patient details.');
       window.scrollTo(0, 0); // Scroll to top to show error
       return;
@@ -248,6 +227,14 @@ export default function BillingPage() {
     setFormError(''); // Clear error if validation passes
 
     try {
+      // Fetch the next serial number
+      const serialResponse = await fetch('/api/bills/next-serial');
+      if (!serialResponse.ok) {
+        throw new Error('Failed to fetch bill serial number');
+      }
+      const serialData = await serialResponse.json();
+      const billSerialNo = serialData.serialNo;
+
       // Save bill to database
       const response = await fetch('/api/bills', {
         method: 'POST',
@@ -261,7 +248,7 @@ export default function BillingPage() {
             contact: patient.contact,
             gender: patient.gender,
             age: patient.age,
-            serialNo: patient.serialNo,
+            serialNo: billSerialNo, // Use the fetched serial number
           },
           items: billItems,
           totalAmount,
@@ -280,7 +267,7 @@ export default function BillingPage() {
 
       // Generate PDF after successful save
       generateBillPdf(
-        patient,
+        { ...patient, serialNo: billSerialNo },
         billItems,
         itemsTotal,
         cgstAmount,
