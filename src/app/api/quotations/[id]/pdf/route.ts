@@ -3,10 +3,35 @@ import { connectToDatabase } from '@/lib/mongodb';
 import Quotation from '@/model/Quotation';
 import { generateQuotationPdfBuffer } from '@/lib/pdfGeneratorServer';
 
+// Define the Quotation interface based on the schema
+interface QuotationDocument {
+  _id: string;
+  serialNo: string;
+  date: Date;
+  patientName: string;
+  patientAddress: string;
+  patientContact: string;
+  patientAge: string;
+  patientGender: string;
+  items: Array<{
+    description: string;
+    quantity: number;
+    price: number;
+    isPriceInclGst: boolean;
+    date: Date;
+    srNo: number;
+  }>;
+  totalAmount: number;
+  discount: number;
+  cgstAmount: number;
+  sgstAmount: number;
+  createdAt: Date;
+}
+
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await connectToDatabase();
-    const quotation = await Quotation.findById(params.id).lean();
+    const quotation = await Quotation.findById(params.id).lean() as QuotationDocument | null;
     if (!quotation) {
       return new Response('Quotation not found', { status: 404 });
     }
