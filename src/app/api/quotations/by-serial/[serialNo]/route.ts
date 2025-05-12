@@ -12,7 +12,7 @@ export async function GET(
 
     const quotation = await Quotation.findOne({ serialNo }).lean();
     
-    if (!quotation) {
+    if (!quotation || typeof quotation !== 'object' || Array.isArray(quotation)) {
       return NextResponse.json({ error: 'Quotation not found' }, { status: 404 });
     }
 
@@ -26,7 +26,7 @@ export async function GET(
         age: quotation.patientAge,
         serialNo: quotation.serialNo
       },
-      items: quotation.items.map(item => ({
+      items: (quotation.items || []).map((item: any) => ({
         type: item.type,
         description: item.description,
         quantity: item.quantity,
