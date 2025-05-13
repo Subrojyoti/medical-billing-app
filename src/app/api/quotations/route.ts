@@ -4,10 +4,12 @@ import Quotation from '@/model/Quotation';
 
 // POST method to create a new quotation
 export async function POST(request: Request) {
+  let requestBody;
   try {
     await connectToDatabase();
 
     const body = await request.json();
+    requestBody = body; // Store body for error logging
     
     const quotationPayload = {
       serialNo: body.patient.serialNo,
@@ -38,9 +40,16 @@ export async function POST(request: Request) {
 
     return NextResponse.json(savedQuotation, { status: 201 });
   } catch (error) {
-    console.error('Error saving quotation:', error);
+    console.error('Error saving quotation:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      body: requestBody // Use the stored request body
+    });
     return NextResponse.json(
-      { error: 'Failed to save quotation' },
+      { 
+        error: 'Failed to save quotation',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
