@@ -3,6 +3,8 @@ import { connectToDatabase } from '@/lib/mongodb';
 import Quotation from '@/model/Quotation';
 import { generateQuotationPdfBuffer } from '@/lib/pdfGeneratorServer';
 
+export const dynamic = 'force-dynamic';
+
 // Define the Quotation interface based on the schema
 interface QuotationDocument {
   _id: string;

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import Bill from '@/model/Bill';
 
+export const dynamic = 'force-dynamic';
+
 // GET method to fetch bills
 export async function GET() {
   try {

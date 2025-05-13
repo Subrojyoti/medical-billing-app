@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import Quotation from '@/model/Quotation';
 
+export const dynamic = 'force-dynamic';
+
 // POST method to create a new quotation
 export async function POST(request: Request) {
   let requestBody;

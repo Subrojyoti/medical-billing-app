@@ -3,6 +3,8 @@ import { connectToDatabase } from '@/lib/mongodb';
 import Bill from '@/model/Bill';
 import { NextRequest } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 interface BillDocument {
   _id: string;
   patientName: string;

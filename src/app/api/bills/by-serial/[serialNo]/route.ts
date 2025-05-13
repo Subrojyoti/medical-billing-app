@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import Bill from '@/model/Bill';
 
+export const dynamic = 'force-dynamic';
+
 // Define the Bill interface based on the schema
 interface BillDocument {
   serialNo: string;

@@ -3,6 +3,8 @@ import { connectToDatabase } from '@/lib/mongodb';
 import Bill from '@/model/Bill';
 import { generateBillPdfBuffer } from '@/lib/pdfGeneratorServer';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     await connectToDatabase();
